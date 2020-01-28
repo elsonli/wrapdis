@@ -21,6 +21,13 @@ class Piece {
     ctx.drawImage(this.image, this.block3[0] * 40, this.block3[1] * 40, 40, 40)
     ctx.drawImage(this.image, this.block4[0] * 40, this.block4[1] * 40, 40, 40)
   }
+
+  move() {
+    this.block1[1] += 1;
+    this.block2[1] += 1;
+    this.block3[1] += 1;
+    this.block4[1] += 1;
+  }
 }
 
 export default Piece;

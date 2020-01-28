@@ -10,9 +10,11 @@ class GameView {
   // }
 
   animate() {
-    // this.game.step();
+    this.game.step();
     this.game.draw(this.ctx);
-    requestAnimationFrame(this.animate);
+    setTimeout(() => {
+      requestAnimationFrame(this.animate);
+    }, 200);
   }
 
   start() {
