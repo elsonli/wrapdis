@@ -35,10 +35,6 @@ class GameView {
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
   }
 
-  // bindKeyHandlers() {
-
-  // }
-
   animate() {
     this.game.movePieceDown();
     this.game.draw(this.ctx);
@@ -48,7 +44,6 @@ class GameView {
   }
 
   start() {
-    // this.bindKeyHandlers();
     requestAnimationFrame(this.animate);
   }
 }
