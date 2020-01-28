@@ -3,7 +3,9 @@ import * as GameUtil from "./utils";
 import allTetrominos from "./tetromino";
 
 class Game {
-  constructor() {
+  constructor(ctx, controller) {
+    this.ctx = ctx;
+    this.controller = controller;
     this.gridWidth = 10;
     this.gridHeight = 20;
     this.tileSize = 40;
@@ -16,7 +18,7 @@ class Game {
     const allTetrominoKeys = Object.keys(allTetrominos);
     const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
     const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
-    this.currPiece = new Piece(randTetromino);
+    this.currPiece = new Piece(randTetromino, this);
     return this.currPiece;
   }
 
@@ -43,37 +45,45 @@ class Game {
     }
   }
 
-  draw(ctx) {
+  draw() {
     // Background for the Grid
-    ctx.clearRect(0, 0, GameUtil.DIM_X, GameUtil.DIM_Y);
-    ctx.fillStyle = GameUtil.BG_COLOR;
-    ctx.fillRect(0, 0, GameUtil.DIM_X, GameUtil.DIM_Y);
+    this.ctx.clearRect(0, 0, GameUtil.DIM_X, GameUtil.DIM_Y);
+    this.ctx.fillStyle = GameUtil.BG_COLOR;
+    this.ctx.fillRect(0, 0, GameUtil.DIM_X, GameUtil.DIM_Y);
     
     // Constructing the Grid
-    ctx.strokeStyle = "#777777";
+    this.ctx.strokeStyle = "#777777";
     for (let idx = 0; idx < this.gridWidth; idx++) {
-      ctx.beginPath();
-      ctx.moveTo(this.tileSize * idx, 0);
-      ctx.lineTo(this.tileSize * idx, 800);
-      ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.tileSize * idx, 0);
+      this.ctx.lineTo(this.tileSize * idx, 800);
+      this.ctx.stroke();
     }
     for (let idx = 0; idx < this.gridHeight; idx++) {
-      ctx.beginPath();
-      ctx.moveTo(0, this.tileSize * idx)
-      ctx.lineTo(400, this.tileSize * idx);
-      ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, this.tileSize * idx)
+      this.ctx.lineTo(400, this.tileSize * idx);
+      this.ctx.stroke();
     }
 
     // Rendering a Piece
     for (let idx = 0; idx < this.pieces.length; idx++) {
       const currPiece = this.pieces[idx];
-      currPiece.draw(ctx);
+      currPiece.draw(this.ctx);
     }
-    this.currPiece.draw(ctx);
+    this.currPiece.draw(this.ctx);
   }
 
-  step() {
-    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles) }
+  movePieceLeft() {
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, -1) }
+  }
+
+  movePieceRight() {
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, 1) }
+  }
+
+  movePieceDown() {
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
   }
 }
 

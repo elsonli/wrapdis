@@ -1,4 +1,3 @@
-import Game from "./game";
 import GameView from "./game_view";
 import * as GameUtil from "./utils";
 
@@ -7,7 +6,5 @@ document.addEventListener("DOMContentLoaded", () => {
   canvasEle.width = GameUtil.DIM_X;
   canvasEle.height = GameUtil.DIM_Y;
   const ctx = canvasEle.getContext("2d");
-  const game = new Game();
-  window.game = game;
-  new GameView(game, ctx).start();
+  new GameView(ctx).start();
 });
