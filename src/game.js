@@ -67,7 +67,6 @@ class Game {
     // Rendering a Piece
     for (let idx = 0; idx < this.pieces.length; idx++) {
       const currPiece = this.pieces[idx];
-      currPiece.image.onload
       currPiece.draw(ctx);
     }
     this.currPiece.draw(ctx);
