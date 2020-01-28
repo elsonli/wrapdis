@@ -9,7 +9,7 @@ class Game {
     this.tileSize = 40;
     this.pieces = [];
     this.generateNextPiece();
-    // this.filledTiles = new Array(10).fill(0).map(() => new Array(20).fill(false));
+    this.filledTiles = new Array(10).fill(0).map(() => new Array(20).fill(false));
   }
   
   generateNextPiece() {
@@ -21,12 +21,20 @@ class Game {
   }
 
   checkCollisions() {
+    const [block1x, block1y] = this.currPiece.block1;
+    const [block2x, block2y] = this.currPiece.block2;
+    const [block3x, block3y] = this.currPiece.block3;
+    const [block4x, block4y] = this.currPiece.block4;
     if (
-      this.currPiece.block1[1] === this.gridHeight - 1 ||
-      this.currPiece.block2[1] === this.gridHeight - 1 ||
-      this.currPiece.block3[1] === this.gridHeight - 1 ||
-      this.currPiece.block4[1] === this.gridHeight - 1
+      this.filledTiles[block1x][block1y + 1] || block1y === this.gridHeight - 1 ||
+      this.filledTiles[block2x][block2y + 1] || block2y === this.gridHeight - 1 ||
+      this.filledTiles[block3x][block3y + 1] || block3y === this.gridHeight - 1 ||
+      this.filledTiles[block4x][block4y + 1] || block4y === this.gridHeight - 1
     ) {
+      this.filledTiles[block1x][block1y] = true;
+      this.filledTiles[block2x][block2y] = true;
+      this.filledTiles[block3x][block3y] = true;
+      this.filledTiles[block4x][block4y] = true;
       this.pieces.push(this.currPiece);
       this.generateNextPiece();
       return true;
@@ -59,13 +67,14 @@ class Game {
     // Rendering a Piece
     for (let idx = 0; idx < this.pieces.length; idx++) {
       const currPiece = this.pieces[idx];
+      currPiece.image.onload
       currPiece.draw(ctx);
     }
     this.currPiece.draw(ctx);
   }
 
   step() {
-    if (!this.checkCollisions()) { this.currPiece.move() }
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles) }
   }
 }
 
