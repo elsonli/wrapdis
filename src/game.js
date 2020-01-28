@@ -22,10 +22,10 @@ class Game {
 
   checkCollisions() {
     if (
-      this.currPiece.block1[1] >= 5 ||
-      this.currPiece.block2[1] >= 5 ||
-      this.currPiece.block3[1] >= 5 ||
-      this.currPiece.block4[1] >= 5
+      this.currPiece.block1[1] === this.gridHeight - 1 ||
+      this.currPiece.block2[1] === this.gridHeight - 1 ||
+      this.currPiece.block3[1] === this.gridHeight - 1 ||
+      this.currPiece.block4[1] === this.gridHeight - 1
     ) {
       this.pieces.push(this.currPiece);
       this.generateNextPiece();
