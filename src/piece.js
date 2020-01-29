@@ -1,5 +1,13 @@
+import * as GameUtils from "./utils";
+
 class Piece {
   constructor(tetromino, game) {
+    this.blocks = [
+      tetromino.block1,
+      tetromino.block2,
+      tetromino.block3,
+      tetromino.block4
+    ]
     this.block1 = tetromino.block1;
     this.block2 = tetromino.block2;
     this.block3 = tetromino.block3;
@@ -8,8 +16,15 @@ class Piece {
     this.image = new Image();
     this.image.src = tetromino.image;
     this.game = game;
+    this.applyToBlocks = this.applyToBlocks.bind(this);
+    this.drawPieceBackground = this.drawPieceBackground.bind(this);
+    this.drawPieceImage = this.drawPieceImage.bind(this);
   }
   
+  applyToBlocks(func) {
+    this.blocks.forEach(block => func(block));
+  };
+
   // Draws a Piece with its color and background image
   drawPieceBackground(block) {
     const tileSize = this.game.tileSize;
@@ -34,29 +49,45 @@ class Piece {
 
   draw(ctx) {
     ctx.fillStyle = this.color;
-    this.drawPieceBackground(this.block1);
-    this.drawPieceBackground(this.block2);
-    this.drawPieceBackground(this.block3);
-    this.drawPieceBackground(this.block4);
-    this.drawPieceImage(this.block1);
-    this.drawPieceImage(this.block2);
-    this.drawPieceImage(this.block3);
-    this.drawPieceImage(this.block4);
+    this.applyToBlocks(this.drawPieceBackground);
+    this.applyToBlocks(this.drawPieceImage);
   }
 
   fillTiles(filledTiles) {
-    filledTiles[this.block1[0]][this.block1[1]] = false;
-    filledTiles[this.block2[0]][this.block2[1]] = false;
-    filledTiles[this.block3[0]][this.block3[1]] = false;
-    filledTiles[this.block4[0]][this.block4[1]] = false;
+    this.applyToBlocks(block => {
+      filledTiles[block[0]][block[1]] = false;
+    })
   }
 
   move(filledTiles, direction, amount) {
     this.fillTiles(filledTiles);
-    this.block1[direction] += amount;
-    this.block2[direction] += amount;
-    this.block3[direction] += amount;
-    this.block4[direction] += amount;
+    if (
+      direction === 0 && (
+        this.block1[0] === 0 || this.block1[1] === this.game.gridWidth ||
+        this.block2[0] === 0 || this.block2[1] === this.game.gridWidth ||
+        this.block3[0] === 0 || this.block3[1] === this.game.gridWidth ||
+        this.block4[0] === 0 || this.block4[1] === this.game.gridWidth
+      ) 
+    ) {
+      this.applyToBlocks(block => {
+        block[direction] += 0;
+      })
+    } else {
+      this.applyToBlocks(block => {
+        block[direction] += amount;
+      })
+    }
+    // {
+      // this.block1[direction] += 0;
+      // this.block2[direction] += 0;
+      // this.block3[direction] += 0;
+      // this.block4[direction] += 0;
+    // } else {
+      // this.block1[direction] += amount;
+      // this.block2[direction] += amount;
+      // this.block3[direction] += amount;
+      // this.block4[direction] += amount;
+    // }
   }
 }
 

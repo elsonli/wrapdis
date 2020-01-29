@@ -1,5 +1,5 @@
 import Piece from "./piece";
-import * as GameUtil from "./utils";
+import * as GameUtils from "./utils";
 import allTetrominos from "./tetromino";
 
 class Game {
@@ -47,9 +47,9 @@ class Game {
 
   draw() {
     // Background for the Grid
-    this.ctx.clearRect(0, 0, GameUtil.DIM_X, GameUtil.DIM_Y);
-    this.ctx.fillStyle = GameUtil.BG_COLOR;
-    this.ctx.fillRect(0, 0, GameUtil.DIM_X, GameUtil.DIM_Y);
+    this.ctx.clearRect(0, 0, GameUtils.DIM_X, GameUtils.DIM_Y);
+    this.ctx.fillStyle = GameUtils.BG_COLOR;
+    this.ctx.fillRect(0, 0, GameUtils.DIM_X, GameUtils.DIM_Y);
     
     // Constructing the Grid
     this.ctx.strokeStyle = "#777777";
