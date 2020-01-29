@@ -1,26 +1,24 @@
+import * as GameUtils from "./utils";
+
 class Piece {
   constructor(tetromino, game) {
-    this.blocks = [
-      tetromino.block1,
-      tetromino.block2,
-      tetromino.block3,
-      tetromino.block4
-    ]
-    this.block1 = tetromino.block1;
-    this.block2 = tetromino.block2;
-    this.block3 = tetromino.block3;
-    this.block4 = tetromino.block4;
+    ({ block1: this.block1,
+       block2: this.block2,
+       block3: this.block3,
+       block4: this.block4 } = tetromino);
+    this.blocks = [this.block1, this.block2, this.block3, this.block4];
     this.color = tetromino.color;
     this.image = new Image();
     this.image.src = tetromino.image;
     this.game = game;
+
     this.applyToBlocks = this.applyToBlocks.bind(this);
     this.drawPieceBackground = this.drawPieceBackground.bind(this);
     this.drawPieceImage = this.drawPieceImage.bind(this);
   }
 
   applyToBlocks(func) {
-    this.blocks.forEach(block => func(block));
+    this.blocks.map(block => func(block));
   };
 
   // Draws a Piece with its color and background image
@@ -51,26 +49,59 @@ class Piece {
     this.applyToBlocks(this.drawPieceImage);
   }
 
-  fillTiles(filledTiles) {
+  fillTiles(filledTiles, bool) {
     this.applyToBlocks(block => {
-      filledTiles[block[0]][block[1]] = false;
-    })
+      let [xPos, yPos] = block;
+      // if (xPos >= 0 && xPos <= GameUtils.GRID_WIDTH - 1 && yPos <= GameUtils.GRID_HEIGHT - 1) {
+        console.log(xPos, "xpos")
+        console.log(yPos, "ypos")
+        filledTiles[xPos][yPos] = bool;
+      // }
+    });
   }
 
+  // Direction 0: Moving horizontally
+  // Direction 1: Moving vertically
+  // Amount -1: Moving left
+  // Amount 1: Moving right
   move(filledTiles, direction, amount) {
-    this.fillTiles(filledTiles);
-    // if (
-    //   direction === 0 && (
-    //     this.block1[0] === 0 || this.block1[1] === this.game.gridWidth ||
-    //     this.block2[0] === 0 || this.block2[1] === this.game.gridWidth ||
-    //     this.block3[0] === 0 || this.block3[1] === this.game.gridWidth ||
-    //     this.block4[0] === 0 || this.block4[1] === this.game.gridWidth
-    //   )
-    // ) {
-      // this.applyToBlocks(block => block[direction] += amount);
-    // } else {
-      this.applyToBlocks(block => block[direction] += amount);
-    // }
+    this.fillTiles(filledTiles, false);
+
+    if (direction === 0) {
+      if (amount === 1 && (
+        (this.block1[0] === GameUtils.GRID_WIDTH - 1) ||
+        (this.block2[0] === GameUtils.GRID_WIDTH - 1) ||
+        (this.block3[0] === GameUtils.GRID_WIDTH - 1) ||
+        (this.block4[0] === GameUtils.GRID_WIDTH - 1)
+      )) {
+        this.applyToBlocks(block => block[direction] += 0);
+      } else if (amount === -1 && (
+        (this.block1[0] === 0) ||
+        (this.block2[0] === 0) ||
+        (this.block3[0] === 0) ||
+        (this.block4[0] === 0)
+      )) {
+        this.applyToBlocks(block => block[direction] += 0);
+      } else {
+        this.applyToBlocks(block => block[direction] += amount);
+      }
+    } else {
+      // Direction is 1
+
+      if (
+        (this.block1[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block1[0]][this.block1[1] + 1]) ||
+        (this.block2[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block2[0]][this.block2[1] + 1]) ||
+        (this.block3[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block3[0]][this.block3[1] + 1]) ||
+        (this.block4[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block4[0]][this.block4[1] + 1])
+      ) {
+        // this.fillTiles(filledTiles, false);
+        this.applyToBlocks(block => block[direction] += 0.25);
+        // this.fillTiles(filledTiles, true);
+      } else {
+        this.applyToBlocks(block => block[direction] += 0.25);
+        this.fillTiles(filledTiles, true);
+      }
+    }
   }
 
   // rotate(filledTiles) {

@@ -33,12 +33,14 @@ class Game {
     return blocks.map(block => func(block));
   }
 
+  // Checks if a block is occupied, within bounds, not necessarily an integer
   checkTile(block) {
-    const [xPos, yPos] = block;
-    return (
-      (this.filledTiles[xPos][yPos] || yPos >= this.gridHeight - 1)
-      && Number.isInteger(Math.round(yPos * 100) / 100)
-    );
+    let [xPos, yPos] = block;
+    // [xPos, yPos] = [Math.round(xPos), Math.round(yPos)];
+    if (xPos >= 0 && xPos <= GameUtils.GRID_WIDTH - 1) {
+      return this.filledTiles[xPos][yPos + 1] || yPos >= GameUtils.GRID_HEIGHT - 1;
+    }
+    return false;
   }
 
   checkCollisions() {
@@ -89,7 +91,7 @@ class Game {
   }
 
   stepDown() {
-    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 0.05) }
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 0.5) }
   }
 }
 
