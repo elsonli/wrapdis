@@ -3,28 +3,28 @@ import Game from "./game";
 class GameView {
   constructor(ctx) {
     this.controller = {
-      keyListener: (event) => {
-        switch (event.keyCode) {
-          // Left Arrow (Move Left 1 Block)
-          case 37:
+      keyListener: event => {
+        switch (event.code) {
+          case "ArrowLeft":
             this.game.movePieceLeft();
             break;
 
           // Up Arrow (Rotate Piece Clockwise)
-          // case 38:
+          // case "ArrowUp":
+            // this.game.rotatePiece();
           
           // Right Arrow (Move Right 1 Block)
-          case 39:
+          case "ArrowRight":
             this.game.movePieceRight();
             break;
           
           // Down Arrow (Move Down 1 Block)
-          case 40:
+          case "ArrowDown":
             this.game.movePieceDown();
             break;
           
           // Space (Drop Immediately)
-          // case 32:
+          // case "Space":
 
         }
       }
@@ -40,7 +40,7 @@ class GameView {
     this.game.draw(this.ctx);
     setTimeout(() => {
       requestAnimationFrame(this.animate);
-    }, 200);
+    }, 500);
   }
 
   start() {

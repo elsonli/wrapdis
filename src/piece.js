@@ -1,5 +1,3 @@
-import * as GameUtils from "./utils";
-
 class Piece {
   constructor(tetromino, game) {
     this.blocks = [
@@ -67,27 +65,21 @@ class Piece {
         this.block2[0] === 0 || this.block2[1] === this.game.gridWidth ||
         this.block3[0] === 0 || this.block3[1] === this.game.gridWidth ||
         this.block4[0] === 0 || this.block4[1] === this.game.gridWidth
-      ) 
+      )
     ) {
-      this.applyToBlocks(block => {
-        block[direction] += 0;
-      })
+      this.applyToBlocks(block => block[direction] += amount);
     } else {
-      this.applyToBlocks(block => {
-        block[direction] += amount;
-      })
+      this.applyToBlocks(block => block[direction] += amount);
     }
-    // {
-      // this.block1[direction] += 0;
-      // this.block2[direction] += 0;
-      // this.block3[direction] += 0;
-      // this.block4[direction] += 0;
-    // } else {
-      // this.block1[direction] += amount;
-      // this.block2[direction] += amount;
-      // this.block3[direction] += amount;
-      // this.block4[direction] += amount;
-    // }
+  }
+
+  rotate(filledTiles) {
+    this.fillTiles(filledTiles);
+    const temp = this.block1;
+    this.block1 = this.block2;
+    this.block2 = this.block3;
+    this.block3 = this.block4;
+    this.block4 = temp;
   }
 }
 
