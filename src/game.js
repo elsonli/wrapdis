@@ -5,12 +5,17 @@ import allTetrominos from "./tetromino";
 class Game {
   constructor(ctx, controller) {
     this.ctx = ctx;
-    this.controller = controller;
-    this.gridWidth = 10;
-    this.gridHeight = 20;
-    this.tileSize = 40;
     this.pieces = [];
+    this.controller = controller;
+
+    this.gridWidth = GameUtils.GRID_WIDTH;
+    this.gridHeight = GameUtils.GRID_HEIGHT;
+    this.tileSize = GameUtils.TILE_SIZE;
+
     this.generateNextPiece();
+
+    this.checkTile = this.checkTile.bind(this);
+    this.applyToBlocks = this.applyToBlocks.bind(this);
     this.filledTiles = new Array(10).fill(0).map(() => new Array(20).fill(false));
   }
   
@@ -22,27 +27,28 @@ class Game {
     return this.currPiece;
   }
 
+  applyToBlocks(func) {
+    const { block1, block2, block3, block4 } = this.currPiece;
+    const blocks = [block1, block2, block3, block4];
+    return blocks.map(block => func(block));
+  }
+
+  checkTile(block) {
+    const [xPos, yPos] = block;
+    return (
+      (this.filledTiles[xPos][yPos] || yPos >= this.gridHeight - 1)
+      && Number.isInteger(Math.round(yPos * 100) / 100)
+    );
+  }
+
   checkCollisions() {
-    const [block1x, block1y] = this.currPiece.block1;
-    const [block2x, block2y] = this.currPiece.block2;
-    const [block3x, block3y] = this.currPiece.block3;
-    const [block4x, block4y] = this.currPiece.block4;
-    if (
-      this.filledTiles[block1x][block1y + 1] || block1y === this.gridHeight - 1 ||
-      this.filledTiles[block2x][block2y + 1] || block2y === this.gridHeight - 1 ||
-      this.filledTiles[block3x][block3y + 1] || block3y === this.gridHeight - 1 ||
-      this.filledTiles[block4x][block4y + 1] || block4y === this.gridHeight - 1
-    ) {
-      this.filledTiles[block1x][block1y] = true;
-      this.filledTiles[block2x][block2y] = true;
-      this.filledTiles[block3x][block3y] = true;
-      this.filledTiles[block4x][block4y] = true;
+    if (this.applyToBlocks(this.checkTile).some(ele => ele)) {
+      this.applyToBlocks(block => this.filledTiles[block[0]][block[1]] = true);
       this.pieces.push(this.currPiece);
       this.generateNextPiece();
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   draw() {
@@ -56,13 +62,13 @@ class Game {
     for (let idx = 0; idx < this.gridWidth; idx++) {
       this.ctx.beginPath();
       this.ctx.moveTo(this.tileSize * idx, 0);
-      this.ctx.lineTo(this.tileSize * idx, 800);
+      this.ctx.lineTo(this.tileSize * idx, GameUtils.DIM_Y);
       this.ctx.stroke();
     }
     for (let idx = 0; idx < this.gridHeight; idx++) {
       this.ctx.beginPath();
       this.ctx.moveTo(0, this.tileSize * idx)
-      this.ctx.lineTo(400, this.tileSize * idx);
+      this.ctx.lineTo(GameUtils.DIM_X, this.tileSize * idx);
       this.ctx.stroke();
     }
 
@@ -74,16 +80,16 @@ class Game {
     this.currPiece.draw(this.ctx);
   }
 
-  movePieceLeft() {
-    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, -1) }
-  }
-
-  movePieceRight() {
+  stepRight() {
     if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, 1) }
   }
 
-  movePieceDown() {
-    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
+  stepLeft() {
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, -1) }
+  }
+
+  stepDown() {
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 0.05) }
   }
 }
 

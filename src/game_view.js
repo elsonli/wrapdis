@@ -6,21 +6,15 @@ class GameView {
       keyListener: event => {
         switch (event.code) {
           case "ArrowLeft":
-            this.game.movePieceLeft();
+            this.game.stepLeft();
             break;
 
           // Up Arrow (Rotate Piece Clockwise)
           // case "ArrowUp":
             // this.game.rotatePiece();
           
-          // Right Arrow (Move Right 1 Block)
           case "ArrowRight":
-            this.game.movePieceRight();
-            break;
-          
-          // Down Arrow (Move Down 1 Block)
-          case "ArrowDown":
-            this.game.movePieceDown();
+            this.game.stepRight();
             break;
           
           // Space (Drop Immediately)
@@ -36,11 +30,9 @@ class GameView {
   }
 
   animate() {
-    this.game.movePieceDown();
+    this.game.stepDown();
     this.game.draw(this.ctx);
-    setTimeout(() => {
-      requestAnimationFrame(this.animate);
-    }, 500);
+    requestAnimationFrame(this.animate);
   }
 
   start() {

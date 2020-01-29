@@ -18,7 +18,7 @@ class Piece {
     this.drawPieceBackground = this.drawPieceBackground.bind(this);
     this.drawPieceImage = this.drawPieceImage.bind(this);
   }
-  
+
   applyToBlocks(func) {
     this.blocks.forEach(block => func(block));
   };
@@ -59,28 +59,28 @@ class Piece {
 
   move(filledTiles, direction, amount) {
     this.fillTiles(filledTiles);
-    if (
-      direction === 0 && (
-        this.block1[0] === 0 || this.block1[1] === this.game.gridWidth ||
-        this.block2[0] === 0 || this.block2[1] === this.game.gridWidth ||
-        this.block3[0] === 0 || this.block3[1] === this.game.gridWidth ||
-        this.block4[0] === 0 || this.block4[1] === this.game.gridWidth
-      )
-    ) {
+    // if (
+    //   direction === 0 && (
+    //     this.block1[0] === 0 || this.block1[1] === this.game.gridWidth ||
+    //     this.block2[0] === 0 || this.block2[1] === this.game.gridWidth ||
+    //     this.block3[0] === 0 || this.block3[1] === this.game.gridWidth ||
+    //     this.block4[0] === 0 || this.block4[1] === this.game.gridWidth
+    //   )
+    // ) {
+      // this.applyToBlocks(block => block[direction] += amount);
+    // } else {
       this.applyToBlocks(block => block[direction] += amount);
-    } else {
-      this.applyToBlocks(block => block[direction] += amount);
-    }
+    // }
   }
 
-  rotate(filledTiles) {
-    this.fillTiles(filledTiles);
-    const temp = this.block1;
-    this.block1 = this.block2;
-    this.block2 = this.block3;
-    this.block3 = this.block4;
-    this.block4 = temp;
-  }
+  // rotate(filledTiles) {
+  //   this.fillTiles(filledTiles);
+  //   const temp = this.block1;
+  //   this.block1 = this.block2;
+  //   this.block2 = this.block3;
+  //   this.block3 = this.block4;
+  //   this.block4 = temp;
+  // }
 }
 
 export default Piece;
