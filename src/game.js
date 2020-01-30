@@ -25,9 +25,10 @@ class Game {
   
   // Assigns `this.currPiece` to be a random and new Piece
   generateNextPiece() {
-    const allTetrominoKeys = Object.keys(allTetrominos);
-    const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
-    const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
+    // const allTetrominoKeys = Object.keys(allTetrominos);
+    // const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
+    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
+    const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
     this.currPiece = new Piece(randTetromino, this, this.ctx);
     return this.currPiece;
   }
@@ -142,6 +143,10 @@ class Game {
 
   dropPiece() {
     while (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
+  }
+
+  rotatePiece() {
+    this.currPiece.rotate();
   }
 }
 

@@ -14,6 +14,7 @@ class Piece {
       new Block(this.block4)
     ];
     this.color = tetromino.color;
+    this.orientation = tetromino.orientation;
     this.image = new Image();
     this.image.src = tetromino.image;
     this.game = game;
@@ -66,7 +67,7 @@ class Piece {
     ctx.fillStyle = this.color;
     this.applyToBlocks(this.drawPieceBackground, ctx);
     this.applyToBlocks(this.drawPieceImage, ctx);
-    
+
     // Constructing the Grid
     ctx.strokeStyle = "#777777";
     for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
@@ -129,14 +130,112 @@ class Piece {
     }
   }
 
-  // rotate(filledTiles) {
-  //   this.fillTiles(filledTiles);
-  //   const temp = this.block1;
-  //   this.block1 = this.block2;
-  //   this.block2 = this.block3;
-  //   this.block3 = this.block4;
-  //   this.block4 = temp;
-  // }
+
+  // block1: [3, -2],
+  // block2: [4, -2],
+  // block3: [5, -2],
+  // block4: [6, -2],
+  rotate() {
+    console.log(this.orientation, "start");
+
+    if (this.orientation === 0) {
+      if (this.color === "lightblue") {
+        this.blocks[0].pos[0] += 2;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 1;
+        this.blocks[1].pos[1] += 1;
+        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[1] += 2;
+        this.blocks[3].pos[0] += -1;
+        this.blocks[3].pos[1] += 3;
+      } else if (this.color === "green") {
+
+      } else if (this.color === "red") {
+        
+      } else if (this.color === "yellow") {
+
+      } else if (this.color === "purple") {
+
+      } else if (this.color === "blue") {
+
+      } else {
+
+      }
+    } else if (this.orientation === 1) {
+      if (this.color === "lightblue") {
+        this.blocks[0].pos[0] += 1;
+        this.blocks[0].pos[1] += 1;
+        this.blocks[1].pos[0] += 0;
+        this.blocks[1].pos[1] += 0;
+        this.blocks[2].pos[0] += -1;
+        this.blocks[2].pos[1] += -1;
+        this.blocks[3].pos[0] += -2;
+        this.blocks[3].pos[1] += -2;
+      } else if (this.color === "green") {
+
+      } else if (this.color === "red") {
+
+      } else if (this.color === "yellow") {
+
+      } else if (this.color === "purple") {
+
+      } else if (this.color === "blue") {
+
+      } else {
+
+      }
+    } else if (this.orientation === 2) {
+      if (this.color === "lightblue") {
+        this.blocks[0].pos[0] += -2;
+        this.blocks[0].pos[1] += 2;
+        this.blocks[1].pos[0] += -1;
+        this.blocks[1].pos[1] += 1;
+        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += 1;
+        this.blocks[3].pos[1] += -1;
+      } else if (this.color === "green") {
+
+      } else if (this.color === "red") {
+
+      } else if (this.color === "yellow") {
+
+      } else if (this.color === "purple") {
+
+      } else if (this.color === "blue") {
+
+      } else {
+
+      }
+    } else {
+      if (this.color === "lightblue") {
+        this.blocks[0].pos[0] += -1;
+        this.blocks[0].pos[1] += -3;
+        this.blocks[1].pos[0] += 0;
+        this.blocks[1].pos[1] += -2;
+        this.blocks[2].pos[0] += 1;
+        this.blocks[2].pos[1] += -1;
+        this.blocks[3].pos[0] += 2;
+        this.blocks[3].pos[1] += 0;
+      } else if (this.color === "green") {
+
+      } else if (this.color === "red") {
+
+      } else if (this.color === "yellow") {
+
+      } else if (this.color === "purple") {
+
+      } else if (this.color === "blue") {
+
+      } else {
+
+      }
+    }
+    this.orientation = (this.orientation + 1) % 4;
+    console.log(this.orientation, "end");
+    console.log(this.blocks.map(block => block.pos));
+
+  }
 }
 
 export default Piece;

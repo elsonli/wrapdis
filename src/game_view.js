@@ -14,8 +14,9 @@ class GameView {
             break;
           
           // Up Arrow (Rotate Piece Clockwise)
-          // case "ArrowUp":
-            // this.game.rotatePiece();
+          case "ArrowUp":
+            this.game.rotatePiece();
+            break;
           
           // Space (Drop Immediately)
           case "Space":
