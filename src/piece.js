@@ -130,11 +130,6 @@ class Piece {
     }
   }
 
-
-  // block1: [3, -2],
-  // block2: [4, -2],
-  // block3: [5, -2],
-  // block4: [6, -2],
   rotate() {
     console.log(this.orientation, "start");
 
@@ -149,7 +144,14 @@ class Piece {
         this.blocks[3].pos[0] += -1;
         this.blocks[3].pos[1] += 3;
       } else if (this.color === "green") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += -1;
+        this.blocks[1].pos[1] += -1;
+        this.blocks[2].pos[0] += 2;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += 1;
+        this.blocks[3].pos[1] += -1;
       } else if (this.color === "red") {
         
       } else if (this.color === "yellow") {
@@ -172,7 +174,14 @@ class Piece {
         this.blocks[3].pos[0] += -2;
         this.blocks[3].pos[1] += -2;
       } else if (this.color === "green") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 1;
+        this.blocks[1].pos[1] += 1;
+        this.blocks[2].pos[0] += -2;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += -1;
+        this.blocks[3].pos[1] += 1;
       } else if (this.color === "red") {
 
       } else if (this.color === "yellow") {
@@ -186,16 +195,23 @@ class Piece {
       }
     } else if (this.orientation === 2) {
       if (this.color === "lightblue") {
-        this.blocks[0].pos[0] += -2;
-        this.blocks[0].pos[1] += 2;
-        this.blocks[1].pos[0] += -1;
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 1;
         this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[0] += -2;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += -1;
+        this.blocks[3].pos[1] += 1;
+      } else if (this.color === "green") {
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += -1;
+        this.blocks[1].pos[1] += -1;
+        this.blocks[2].pos[0] += 2;
         this.blocks[2].pos[1] += 0;
         this.blocks[3].pos[0] += 1;
         this.blocks[3].pos[1] += -1;
-      } else if (this.color === "green") {
-
       } else if (this.color === "red") {
 
       } else if (this.color === "yellow") {
@@ -218,7 +234,14 @@ class Piece {
         this.blocks[3].pos[0] += 2;
         this.blocks[3].pos[1] += 0;
       } else if (this.color === "green") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 1;
+        this.blocks[1].pos[1] += 1;
+        this.blocks[2].pos[0] += -2;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += -1;
+        this.blocks[3].pos[1] += 1;
       } else if (this.color === "red") {
 
       } else if (this.color === "yellow") {
