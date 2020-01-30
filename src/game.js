@@ -1,4 +1,3 @@
-import Block from "./block";
 import Piece from "./piece";
 import * as GameUtils from "./utils";
 import allTetrominos from "./tetromino";
@@ -25,10 +24,9 @@ class Game {
   
   // Assigns `this.currPiece` to be a random and new Piece
   generateNextPiece() {
-    // const allTetrominoKeys = Object.keys(allTetrominos);
-    // const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
-    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
-    const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoL"]));
+    const allTetrominoKeys = Object.keys(allTetrominos);
+    const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
+    const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
     this.currPiece = new Piece(randTetromino, this, this.ctx);
     return this.currPiece;
   }
