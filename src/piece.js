@@ -96,7 +96,6 @@ class Piece {
         ) {
           // this.fillTiles(filledTiles, false);
           this.applyToBlocks(block => block[direction] += amount);
-          console.log("hello")
           // this.fillTiles(filledTiles, true);
 
         } else {

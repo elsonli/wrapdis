@@ -16,7 +16,9 @@ class Game {
 
     this.checkTile = this.checkTile.bind(this);
     this.applyToBlocks = this.applyToBlocks.bind(this);
-    this.filledTiles = new Array(10).fill(0).map(() => new Array(20).fill(false));
+    this.filledTiles = new Array(this.gridWidth).fill(0).map(() => {
+      return new Array(this.gridHeight).fill(false)
+    });
   }
   
   // Assigns `this.currPiece` to be a random and new Piece
@@ -49,6 +51,7 @@ class Game {
     if (this.applyToBlocks(this.checkTile).some(ele => ele)) {
       this.applyToBlocks(block => this.filledTiles[Math.round(block[0])][Math.round(block[1])] = true);
       this.pieces.push(this.currPiece);
+      this.clearRow();
       this.generateNextPiece();
       return true;
     }
@@ -84,6 +87,21 @@ class Game {
     this.currPiece.draw(this.ctx);
   }
 
+  clearRow() {
+    const transposed = new Array(this.gridHeight).fill(0).map(() => {
+      return new Array(this.gridWidth).fill(false);
+    });
+    for (let idx = 0; idx < transposed.length; idx++) {
+      for (let jdx = 0; jdx < transposed[0].length; jdx++) {
+        transposed[idx][jdx] = this.filledTiles[jdx][idx];
+      }
+    }
+    console.log(transposed);
+    // transposed.forEach(row => {
+
+    // });
+  }
+
   stepRight() {
     if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, 1) }
   }
@@ -94,6 +112,10 @@ class Game {
 
   stepDown() {
     if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
+  }
+
+  dropPiece() {
+    while (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
   }
 }
 

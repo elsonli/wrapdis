@@ -11,15 +11,15 @@ class GameView {
 
           case "ArrowRight":
             this.game.stepRight();
-          break;
+            break;
           
           // Up Arrow (Rotate Piece Clockwise)
           // case "ArrowUp":
             // this.game.rotatePiece();
           
           // Space (Drop Immediately)
-          // case "Space":
-
+          case "Space":
+            this.game.dropPiece();
         }
       }
     };
