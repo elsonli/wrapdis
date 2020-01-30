@@ -19,6 +19,7 @@ class Game {
     this.filledTiles = new Array(10).fill(0).map(() => new Array(20).fill(false));
   }
   
+  // Assigns `this.currPiece` to be a random and new Piece
   generateNextPiece() {
     const allTetrominoKeys = Object.keys(allTetrominos);
     const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
@@ -27,6 +28,7 @@ class Game {
     return this.currPiece;
   }
 
+  // Applies a function that takes in a block to every block of `this.currPiece`
   applyToBlocks(func) {
     const { block1, block2, block3, block4 } = this.currPiece;
     const blocks = [block1, block2, block3, block4];
@@ -45,7 +47,7 @@ class Game {
 
   checkCollisions() {
     if (this.applyToBlocks(this.checkTile).some(ele => ele)) {
-      this.applyToBlocks(block => this.filledTiles[block[0]][block[1]] = true);
+      this.applyToBlocks(block => this.filledTiles[Math.round(block[0])][Math.round(block[1])] = true);
       this.pieces.push(this.currPiece);
       this.generateNextPiece();
       return true;
@@ -91,7 +93,7 @@ class Game {
   }
 
   stepDown() {
-    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 0.5) }
+    if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
   }
 }
 

@@ -53,8 +53,6 @@ class Piece {
     this.applyToBlocks(block => {
       let [xPos, yPos] = block;
       // if (xPos >= 0 && xPos <= GameUtils.GRID_WIDTH - 1 && yPos <= GameUtils.GRID_HEIGHT - 1) {
-        console.log(xPos, "xpos")
-        console.log(yPos, "ypos")
         filledTiles[xPos][yPos] = bool;
       // }
     });
@@ -65,41 +63,46 @@ class Piece {
   // Amount -1: Moving left
   // Amount 1: Moving right
   move(filledTiles, direction, amount) {
-    this.fillTiles(filledTiles, false);
-
+    
     if (direction === 0) {
-      if (amount === 1 && (
+      if ((amount === 1) && (
         (this.block1[0] === GameUtils.GRID_WIDTH - 1) ||
         (this.block2[0] === GameUtils.GRID_WIDTH - 1) ||
         (this.block3[0] === GameUtils.GRID_WIDTH - 1) ||
         (this.block4[0] === GameUtils.GRID_WIDTH - 1)
       )) {
+        this.fillTiles(filledTiles, false);
         this.applyToBlocks(block => block[direction] += 0);
-      } else if (amount === -1 && (
+      } else if ((amount === -1) && (
         (this.block1[0] === 0) ||
         (this.block2[0] === 0) ||
         (this.block3[0] === 0) ||
         (this.block4[0] === 0)
       )) {
+        this.fillTiles(filledTiles, false);
         this.applyToBlocks(block => block[direction] += 0);
       } else {
+        this.fillTiles(filledTiles, false);
         this.applyToBlocks(block => block[direction] += amount);
       }
     } else {
       // Direction is 1
-
+      
       if (
         (this.block1[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block1[0]][this.block1[1] + 1]) ||
         (this.block2[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block2[0]][this.block2[1] + 1]) ||
         (this.block3[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block3[0]][this.block3[1] + 1]) ||
         (this.block4[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block4[0]][this.block4[1] + 1])
-      ) {
-        // this.fillTiles(filledTiles, false);
-        this.applyToBlocks(block => block[direction] += 0.25);
-        // this.fillTiles(filledTiles, true);
-      } else {
-        this.applyToBlocks(block => block[direction] += 0.25);
-        this.fillTiles(filledTiles, true);
+        ) {
+          // this.fillTiles(filledTiles, false);
+          this.applyToBlocks(block => block[direction] += amount);
+          console.log("hello")
+          // this.fillTiles(filledTiles, true);
+
+        } else {
+          this.applyToBlocks(block => block[direction] += amount);
+          this.fillTiles(filledTiles, true);
+          // console.log(this.filledTiles[this.block1[0]][this.block[1]], "block1")
       }
     }
   }

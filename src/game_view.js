@@ -9,13 +9,13 @@ class GameView {
             this.game.stepLeft();
             break;
 
+          case "ArrowRight":
+            this.game.stepRight();
+          break;
+          
           // Up Arrow (Rotate Piece Clockwise)
           // case "ArrowUp":
             // this.game.rotatePiece();
-          
-          case "ArrowRight":
-            this.game.stepRight();
-            break;
           
           // Space (Drop Immediately)
           // case "Space":
@@ -30,9 +30,11 @@ class GameView {
   }
 
   animate() {
+    setTimeout(() => {
     this.game.stepDown();
     this.game.draw(this.ctx);
-    requestAnimationFrame(this.animate);
+      requestAnimationFrame(this.animate);
+    }, 1000);
   }
 
   start() {
