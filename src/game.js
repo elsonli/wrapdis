@@ -17,6 +17,7 @@ class Game {
 
     this.checkBlock = this.checkBlock.bind(this);
     this.applyToBlocks = this.applyToBlocks.bind(this);
+    this.shiftRowDown = this.shiftRowDown.bind(this);
     this.filledTiles = new Array(this.gridWidth).fill(0).map(() => {
       return new Array(this.gridHeight);
     });
@@ -45,7 +46,20 @@ class Game {
     return false;
   }
 
+  // Shifts a single row down, but leaves an empty square
+  shiftRowDown(grid, rowIdx) {
+    const row = grid[rowIdx - 1];
+    if (row) {
+      row.map(block => {
+        if (block) { block.pos[1] += 1 }
+      });
+    }
+  }
+
   clearRow() {
+    // Keep track of rows that have been cleared
+    // const clearedRows = [];
+
     // Construct a transposed game board to check for filled rows
     const transposed = new Array(this.gridHeight).fill(0).map(() => {
       return new Array(this.gridWidth);
@@ -58,12 +72,18 @@ class Game {
     for (let idx = 0; idx < transposed.length; idx++) {
       const row = transposed[idx];
       if (row.every(block => block)) {
+        // clearedRows.push(idx);
         for (let jdx = 0; jdx < transposed[0].length; jdx++) {
           const currBlock = transposed[idx][jdx];
           currBlock.toggleOff();
         }
       }
     }
+
+    // console.log(clearedRows);
+    // this.shiftRowDown(transposed, clearedRows[0]);
+
+    // Clear clearedRows
   }
 
   checkCollisions() {
