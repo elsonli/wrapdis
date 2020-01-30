@@ -162,7 +162,14 @@ class Piece {
         this.blocks[3].pos[0] += -1;
         this.blocks[3].pos[1] += 1;
       } else if (this.color === "yellow") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 0;
+        this.blocks[1].pos[1] += 0;
+        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += 0;
+        this.blocks[3].pos[1] += 0;
       } else if (this.color === "purple") {
 
       } else if (this.color === "blue") {
@@ -199,7 +206,14 @@ class Piece {
         this.blocks[3].pos[0] += 1;
         this.blocks[3].pos[1] += -1;
       } else if (this.color === "yellow") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 0;
+        this.blocks[1].pos[1] += 0;
+        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += 0;
+        this.blocks[3].pos[1] += 0;
       } else if (this.color === "purple") {
 
       } else if (this.color === "blue") {
@@ -236,7 +250,14 @@ class Piece {
         this.blocks[3].pos[0] += -1;
         this.blocks[3].pos[1] += 1;
       } else if (this.color === "yellow") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 0;
+        this.blocks[1].pos[1] += 0;
+        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += 0;
+        this.blocks[3].pos[1] += 0;
       } else if (this.color === "purple") {
 
       } else if (this.color === "blue") {
@@ -273,7 +294,14 @@ class Piece {
         this.blocks[3].pos[0] += 1;
         this.blocks[3].pos[1] += -1;
       } else if (this.color === "yellow") {
-
+        this.blocks[0].pos[0] += 0;
+        this.blocks[0].pos[1] += 0;
+        this.blocks[1].pos[0] += 0;
+        this.blocks[1].pos[1] += 0;
+        this.blocks[2].pos[0] += 0;
+        this.blocks[2].pos[1] += 0;
+        this.blocks[3].pos[0] += 0;
+        this.blocks[3].pos[1] += 0;
       } else if (this.color === "purple") {
 
       } else if (this.color === "blue") {
