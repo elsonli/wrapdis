@@ -15,7 +15,7 @@ class Game {
 
     this.generateNextPiece();
 
-    this.checkTile = this.checkTile.bind(this);
+    this.checkBlock = this.checkBlock.bind(this);
     this.applyToBlocks = this.applyToBlocks.bind(this);
     this.filledTiles = new Array(this.gridWidth).fill(0).map(() => {
       return new Array(this.gridHeight);
@@ -27,36 +27,56 @@ class Game {
     const allTetrominoKeys = Object.keys(allTetrominos);
     const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
     const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
-    this.currPiece = new Piece(randTetromino, this);
+    this.currPiece = new Piece(randTetromino, this, this.ctx);
+    const { block1, block2, block3, block4 } = this.currPiece;
+    // this.blocks = [
+    //   new Block(block1),
+    //   new Block(block2),
+    //   new Block(block3),
+    //   new Block(block4)
+    // ];
     return this.currPiece;
   }
 
   // Applies a function that takes in a block to every block of `this.currPiece`
   applyToBlocks(func) {
-    const { block1, block2, block3, block4 } = this.currPiece;
-    const blocks = [
-      new Block(block1),
-      new Block(block2),
-      new Block(block3),
-      new Block(block4)
-    ];
-    return blocks.map(block => func(block));
+    return this.currPiece.blocks.map(block => func(block));
   }
 
   // Checks if a block is occupied, within bounds, not necessarily an integer
-  checkTile(block) {
+  checkBlock(block) {
     let [xPos, yPos] = block.pos;
-    // [xPos, yPos] = [Math.round(xPos), Math.round(yPos)];
-    if (xPos >= 0 && xPos <= GameUtils.GRID_WIDTH - 1) {
-      return this.filledTiles[xPos][yPos + 1] || yPos >= GameUtils.GRID_HEIGHT - 1;
+    if (xPos >= 0 && xPos < GameUtils.GRID_WIDTH) {
+      return (yPos >= GameUtils.GRID_HEIGHT - 1) || this.filledTiles[xPos][yPos + 1];
     }
     return false;
   }
 
+  clearRow() {
+    // Construct a transposed game board to check for filled rows
+    const transposed = new Array(this.gridHeight).fill(0).map(() => {
+      return new Array(this.gridWidth);
+    });
+    for (let idx = 0; idx < transposed.length; idx++) {
+      for (let jdx = 0; jdx < transposed[0].length; jdx++) {
+        transposed[idx][jdx] = this.filledTiles[jdx][idx];
+      }
+    }
+    for (let idx = 0; idx < transposed.length; idx++) {
+      const row = transposed[idx];
+      if (row.every(block => block)) {
+        for (let jdx = 0; jdx < transposed[0].length; jdx++) {
+          const currBlock = transposed[idx][jdx];
+          currBlock.toggleOff();
+        }
+      }
+    }
+  }
+
   checkCollisions() {
-    if (this.applyToBlocks(this.checkTile).some(ele => ele)) {
+    if (this.applyToBlocks(this.checkBlock).some(bool => bool)) {
       this.applyToBlocks(block => {
-        this.filledTiles[Math.round(block.pos[0])][Math.round(block.pos[1])] = block
+        this.filledTiles[block.pos[0]][block.pos[1]] = block
       });
       this.pieces.push(this.currPiece);
       this.clearRow();
@@ -93,31 +113,6 @@ class Game {
       currPiece.draw(this.ctx);
     }
     this.currPiece.draw(this.ctx);
-  }
-
-  clearRow() {
-    const transposed = new Array(this.gridHeight).fill(0).map(() => {
-      return new Array(this.gridWidth);
-    });
-    for (let idx = 0; idx < transposed.length; idx++) {
-      for (let jdx = 0; jdx < transposed[0].length; jdx++) {
-        transposed[idx][jdx] = this.filledTiles[jdx][idx];
-      }
-    }
-    for (let idx = 0; idx < transposed.length; idx++) {
-      const row = transposed[idx];
-      if (row.every(ele => ele)) {
-        for (let jdx = 0; jdx < transposed[0].length; jdx++) {
-          const currBlock = transposed[idx][jdx];
-          currBlock.toggleOff();
-        }
-      }
-    }
-    for (let idx = 0; idx < this.filledTiles.length; idx++) {
-      for (let jdx = 0; jdx < this.filledTiles[0].length; jdx++) {
-        this.filledTiles[idx][jdx] = transposed[jdx][idx];
-      }
-    }
   }
 
   stepRight() {

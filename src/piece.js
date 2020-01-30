@@ -19,27 +19,28 @@ class Piece {
     this.game = game;
 
     this.applyToBlocks = this.applyToBlocks.bind(this);
-    this.drawPieceBackground = this.drawPieceBackground.bind(this);
+    this.draw = this.draw.bind(this);
     this.drawPieceImage = this.drawPieceImage.bind(this);
+    this.drawPieceBackground = this.drawPieceBackground.bind(this);
   }
 
-  applyToBlocks(func) {
-    this.blocks.map(block => func(block));
+  applyToBlocks(func, ctx) {
+    this.blocks.map(block => func(block, ctx));
   };
 
   // Draws a Piece with its color and background image
   drawPieceBackground(block, ctx) {
     const tileSize = this.game.tileSize;
     if (block.filled) {
-      this.game.ctx.fillRect(
+      ctx.fillRect(
         block.pos[0] * tileSize,
         block.pos[1] * tileSize,
         tileSize,
         tileSize
-      );
+        );
     } else {
       ctx.fillStyle = "black";
-      this.game.ctx.fillRect(
+      ctx.fillRect(
         block.pos[0] * tileSize,
         block.pos[1] * tileSize,
         tileSize,
@@ -51,16 +52,8 @@ class Piece {
   drawPieceImage(block, ctx) {
     const tileSize = this.game.tileSize;
     if (block.filled) {
-      this.game.ctx.drawImage(
+      ctx.drawImage(
         this.image,
-        block.pos[0] * tileSize,
-        block.pos[1] * tileSize,
-        tileSize,
-        tileSize
-      );
-    } else {
-      ctx.fillStyle = "black";
-      this.game.ctx.fillRect(
         block.pos[0] * tileSize,
         block.pos[1] * tileSize,
         tileSize,
@@ -79,7 +72,7 @@ class Piece {
     this.applyToBlocks(block => {
       let [xPos, yPos] = block.pos;
       if (bool) {
-        filledTiles[xPos][yPos] = block
+        filledTiles[xPos][yPos] = block;
       } else {
         filledTiles[xPos][yPos] = undefined;
       }
@@ -112,8 +105,7 @@ class Piece {
       if (
         (this.blocks.map(block => block.pos[1] + 1 <= GameUtils.GRID_HEIGHT - 1)).some(ele => ele) ||
         (this.blocks.map(block => filledTiles[block.pos[0]][block.pos[1]] + 1)).some(ele => ele)
-        ) {
-          console.log(filledTiles);
+      ) {
         this.applyToBlocks(block => block.pos[direction] += amount);
       } else {
         this.applyToBlocks(block => block.pos[direction] += amount);

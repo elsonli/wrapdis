@@ -30,9 +30,9 @@ class GameView {
   }
 
   animate() {
-    setTimeout(() => {
     this.game.stepDown();
     this.game.draw(this.ctx);
+    setTimeout(() => {
       requestAnimationFrame(this.animate);
     }, 1000);
   }
