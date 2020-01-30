@@ -1,3 +1,4 @@
+import Block from "./block";
 import * as GameUtils from "./utils";
 
 class Piece {
@@ -6,7 +7,12 @@ class Piece {
        block2: this.block2,
        block3: this.block3,
        block4: this.block4 } = tetromino);
-    this.blocks = [this.block1, this.block2, this.block3, this.block4];
+    this.blocks = [
+      new Block(this.block1),
+      new Block(this.block2),
+      new Block(this.block3),
+      new Block(this.block4)
+    ];
     this.color = tetromino.color;
     this.image = new Image();
     this.image.src = tetromino.image;
@@ -22,39 +28,61 @@ class Piece {
   };
 
   // Draws a Piece with its color and background image
-  drawPieceBackground(block) {
+  drawPieceBackground(block, ctx) {
     const tileSize = this.game.tileSize;
-    this.game.ctx.fillRect(
-      block[0] * tileSize,
-      block[1] * tileSize,
-      tileSize,
-      tileSize
-    );
+    if (block.filled) {
+      this.game.ctx.fillRect(
+        block.pos[0] * tileSize,
+        block.pos[1] * tileSize,
+        tileSize,
+        tileSize
+      );
+    } else {
+      ctx.fillStyle = "black";
+      this.game.ctx.fillRect(
+        block.pos[0] * tileSize,
+        block.pos[1] * tileSize,
+        tileSize,
+        tileSize
+      );
+    }
   }
 
-  drawPieceImage(block) {
+  drawPieceImage(block, ctx) {
     const tileSize = this.game.tileSize;
-    this.game.ctx.drawImage(
-      this.image,
-      block[0] * tileSize,
-      block[1] * tileSize,
-      tileSize,
-      tileSize
-    );
+    if (block.filled) {
+      this.game.ctx.drawImage(
+        this.image,
+        block.pos[0] * tileSize,
+        block.pos[1] * tileSize,
+        tileSize,
+        tileSize
+      );
+    } else {
+      ctx.fillStyle = "black";
+      this.game.ctx.fillRect(
+        block.pos[0] * tileSize,
+        block.pos[1] * tileSize,
+        tileSize,
+        tileSize
+      );
+    }
   }
 
   draw(ctx) {
     ctx.fillStyle = this.color;
-    this.applyToBlocks(this.drawPieceBackground);
-    this.applyToBlocks(this.drawPieceImage);
+    this.applyToBlocks(this.drawPieceBackground, ctx);
+    this.applyToBlocks(this.drawPieceImage, ctx);
   }
 
   fillTiles(filledTiles, bool) {
     this.applyToBlocks(block => {
-      let [xPos, yPos] = block;
-      // if (xPos >= 0 && xPos <= GameUtils.GRID_WIDTH - 1 && yPos <= GameUtils.GRID_HEIGHT - 1) {
-        filledTiles[xPos][yPos] = bool;
-      // }
+      let [xPos, yPos] = block.pos;
+      if (bool) {
+        filledTiles[xPos][yPos] = block
+      } else {
+        filledTiles[xPos][yPos] = undefined;
+      }
     });
   }
 
@@ -65,43 +93,31 @@ class Piece {
   move(filledTiles, direction, amount) {
     
     if (direction === 0) {
-      if ((amount === 1) && (
-        (this.block1[0] === GameUtils.GRID_WIDTH - 1) ||
-        (this.block2[0] === GameUtils.GRID_WIDTH - 1) ||
-        (this.block3[0] === GameUtils.GRID_WIDTH - 1) ||
-        (this.block4[0] === GameUtils.GRID_WIDTH - 1)
-      )) {
-        this.fillTiles(filledTiles, false);
-        this.applyToBlocks(block => block[direction] += 0);
-      } else if ((amount === -1) && (
-        (this.block1[0] === 0) ||
-        (this.block2[0] === 0) ||
-        (this.block3[0] === 0) ||
-        (this.block4[0] === 0)
-      )) {
-        this.fillTiles(filledTiles, false);
-        this.applyToBlocks(block => block[direction] += 0);
+      if ((amount === 1) && (this.blocks.map(block => {
+        return block.pos[0] === GameUtils.GRID_WIDTH - 1;
+      }).some(ele => ele))) {
+        this.fillTiles(filledTiles, undefined);
+        this.applyToBlocks(block => block.pos[direction] += 0);
+      } else if ((amount === -1) && (this.blocks.map(block => {
+        return block.pos[0] === 0;
+      }).some(ele => ele))) {
+        this.fillTiles(filledTiles, undefined);
+        this.applyToBlocks(block => block.pos[direction] += 0);
       } else {
-        this.fillTiles(filledTiles, false);
-        this.applyToBlocks(block => block[direction] += amount);
+        this.fillTiles(filledTiles, undefined);
+        this.applyToBlocks(block => block.pos[direction] += amount);
       }
     } else {
       // Direction is 1
-      
       if (
-        (this.block1[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block1[0]][this.block1[1] + 1]) ||
-        (this.block2[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block2[0]][this.block2[1] + 1]) ||
-        (this.block3[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block3[0]][this.block3[1] + 1]) ||
-        (this.block4[1] + 1 <= GameUtils.GRID_HEIGHT - 1 || filledTiles[this.block4[0]][this.block4[1] + 1])
+        (this.blocks.map(block => block.pos[1] + 1 <= GameUtils.GRID_HEIGHT - 1)).some(ele => ele) ||
+        (this.blocks.map(block => filledTiles[block.pos[0]][block.pos[1]] + 1)).some(ele => ele)
         ) {
-          // this.fillTiles(filledTiles, false);
-          this.applyToBlocks(block => block[direction] += amount);
-          // this.fillTiles(filledTiles, true);
-
-        } else {
-          this.applyToBlocks(block => block[direction] += amount);
-          this.fillTiles(filledTiles, true);
-          // console.log(this.filledTiles[this.block1[0]][this.block[1]], "block1")
+          console.log(filledTiles);
+        this.applyToBlocks(block => block.pos[direction] += amount);
+      } else {
+        this.applyToBlocks(block => block.pos[direction] += amount);
+        this.fillTiles(filledTiles, true);
       }
     }
   }

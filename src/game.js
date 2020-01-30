@@ -1,3 +1,4 @@
+import Block from "./block";
 import Piece from "./piece";
 import * as GameUtils from "./utils";
 import allTetrominos from "./tetromino";
@@ -17,7 +18,7 @@ class Game {
     this.checkTile = this.checkTile.bind(this);
     this.applyToBlocks = this.applyToBlocks.bind(this);
     this.filledTiles = new Array(this.gridWidth).fill(0).map(() => {
-      return new Array(this.gridHeight).fill(false)
+      return new Array(this.gridHeight);
     });
   }
   
@@ -33,13 +34,18 @@ class Game {
   // Applies a function that takes in a block to every block of `this.currPiece`
   applyToBlocks(func) {
     const { block1, block2, block3, block4 } = this.currPiece;
-    const blocks = [block1, block2, block3, block4];
+    const blocks = [
+      new Block(block1),
+      new Block(block2),
+      new Block(block3),
+      new Block(block4)
+    ];
     return blocks.map(block => func(block));
   }
 
   // Checks if a block is occupied, within bounds, not necessarily an integer
   checkTile(block) {
-    let [xPos, yPos] = block;
+    let [xPos, yPos] = block.pos;
     // [xPos, yPos] = [Math.round(xPos), Math.round(yPos)];
     if (xPos >= 0 && xPos <= GameUtils.GRID_WIDTH - 1) {
       return this.filledTiles[xPos][yPos + 1] || yPos >= GameUtils.GRID_HEIGHT - 1;
@@ -49,7 +55,9 @@ class Game {
 
   checkCollisions() {
     if (this.applyToBlocks(this.checkTile).some(ele => ele)) {
-      this.applyToBlocks(block => this.filledTiles[Math.round(block[0])][Math.round(block[1])] = true);
+      this.applyToBlocks(block => {
+        this.filledTiles[Math.round(block.pos[0])][Math.round(block.pos[1])] = block
+      });
       this.pieces.push(this.currPiece);
       this.clearRow();
       this.generateNextPiece();
@@ -89,7 +97,7 @@ class Game {
 
   clearRow() {
     const transposed = new Array(this.gridHeight).fill(0).map(() => {
-      return new Array(this.gridWidth).fill(false);
+      return new Array(this.gridWidth);
     });
     for (let idx = 0; idx < transposed.length; idx++) {
       for (let jdx = 0; jdx < transposed[0].length; jdx++) {
@@ -100,7 +108,8 @@ class Game {
       const row = transposed[idx];
       if (row.every(ele => ele)) {
         for (let jdx = 0; jdx < transposed[0].length; jdx++) {
-          transposed[idx][jdx] = false;
+          const currBlock = transposed[idx][jdx];
+          currBlock.toggleOff();
         }
       }
     }
