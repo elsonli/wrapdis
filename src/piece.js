@@ -66,6 +66,7 @@ class Piece {
     ctx.fillStyle = this.color;
     this.applyToBlocks(this.drawPieceBackground, ctx);
     this.applyToBlocks(this.drawPieceImage, ctx);
+    
     // Constructing the Grid
     ctx.strokeStyle = "#777777";
     for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
