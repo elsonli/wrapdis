@@ -66,6 +66,20 @@ class Piece {
     ctx.fillStyle = this.color;
     this.applyToBlocks(this.drawPieceBackground, ctx);
     this.applyToBlocks(this.drawPieceImage, ctx);
+    // Constructing the Grid
+    ctx.strokeStyle = "#777777";
+    for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
+      ctx.beginPath();
+      ctx.moveTo(GameUtils.TILE_SIZE * idx, 0);
+      ctx.lineTo(GameUtils.TILE_SIZE * idx, GameUtils.DIM_Y);
+      ctx.stroke();
+    }
+    for (let idx = 0; idx < GameUtils.GRID_HEIGHT; idx++) {
+      ctx.beginPath();
+      ctx.moveTo(0, GameUtils.TILE_SIZE * idx)
+      ctx.lineTo(GameUtils.DIM_X, GameUtils.TILE_SIZE * idx);
+      ctx.stroke();
+    }
   }
 
   fillTiles(filledTiles, bool) {
