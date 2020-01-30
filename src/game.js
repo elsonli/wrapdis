@@ -28,7 +28,7 @@ class Game {
     // const allTetrominoKeys = Object.keys(allTetrominos);
     // const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
     // const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
-    const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoT"]));
+    const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoJ"]));
     this.currPiece = new Piece(randTetromino, this, this.ctx);
     return this.currPiece;
   }
