@@ -131,8 +131,6 @@ class Piece {
   }
 
   rotate() {
-    console.log(this.orientation, "start");
-
     if (this.orientation === 0) {
       if (this.color === "lightblue") {
         this.blocks[0].pos[0] += 2;
@@ -395,9 +393,6 @@ class Piece {
       }
     }
     this.orientation = (this.orientation + 1) % 4;
-    console.log(this.orientation, "end");
-    console.log(this.blocks.map(block => block.pos));
-
   }
 }
 
