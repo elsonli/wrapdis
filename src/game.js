@@ -96,10 +96,19 @@ class Game {
         transposed[idx][jdx] = this.filledTiles[jdx][idx];
       }
     }
-    console.log(transposed);
-    // transposed.forEach(row => {
-
-    // });
+    for (let idx = 0; idx < transposed.length; idx++) {
+      const row = transposed[idx];
+      if (row.every(ele => ele)) {
+        for (let jdx = 0; jdx < transposed[0].length; jdx++) {
+          transposed[idx][jdx] = false;
+        }
+      }
+    }
+    for (let idx = 0; idx < this.filledTiles.length; idx++) {
+      for (let jdx = 0; jdx < this.filledTiles[0].length; jdx++) {
+        this.filledTiles[idx][jdx] = transposed[jdx][idx];
+      }
+    }
   }
 
   stepRight() {
