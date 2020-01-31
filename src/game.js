@@ -80,7 +80,12 @@ class Game {
     }
 
     // console.log(clearedRows);
-    // this.shiftRowDown(transposed, clearedRows[0]);
+    // clearedRows = clearedRows.reverse();
+    // console.log(clearedRows);
+    // clearedRows.forEach(rowIdx => {
+    //   console.log(rowIdx);
+    //   this.shiftRowDown(transposed, rowIdx);
+    // });
 
     // Clear clearedRows
   }
