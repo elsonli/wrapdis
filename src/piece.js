@@ -38,7 +38,7 @@ class Piece {
         block.pos[1] * tileSize,
         tileSize,
         tileSize
-        );
+      );
     } else {
       ctx.fillStyle = "black";
       ctx.fillRect(
@@ -73,10 +73,10 @@ class Piece {
     for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
       ctx.beginPath();
       ctx.moveTo(GameUtils.TILE_SIZE * idx, 0);
-      ctx.lineTo(GameUtils.TILE_SIZE * idx, GameUtils.DIM_Y);
+      ctx.lineTo(GameUtils.TILE_SIZE * idx, GameUtils.TILE_SIZE * GameUtils.GRID_HEIGHT);
       ctx.stroke();
     }
-    for (let idx = 0; idx < GameUtils.GRID_HEIGHT; idx++) {
+    for (let idx = 0; idx <= GameUtils.GRID_HEIGHT; idx++) {
       ctx.beginPath();
       ctx.moveTo(0, GameUtils.TILE_SIZE * idx)
       ctx.lineTo(GameUtils.DIM_X, GameUtils.TILE_SIZE * idx);

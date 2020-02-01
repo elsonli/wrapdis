@@ -48,6 +48,9 @@ class GameView {
   }
 
   stop() {
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "30px Arial";
+    this.ctx.fillText(this.game.score, 200, 830);
     cancelAnimationFrame(this.animation);
   }
 }

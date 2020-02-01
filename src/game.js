@@ -7,6 +7,7 @@ class Game {
     this.ctx = ctx;
     this.pieces = [];
     this.controller = controller;
+    this.score = 0;
 
     this.gridWidth = GameUtils.GRID_WIDTH;
     this.gridHeight = GameUtils.GRID_HEIGHT;
@@ -91,6 +92,8 @@ class Game {
         this.filledTiles[idx][jdx] = transposed[jdx][idx];
       }
     }
+
+    this.score += clearedRows.length;
   }
 
   checkCollisions() {
@@ -117,7 +120,7 @@ class Game {
     for (let idx = 0; idx < this.gridWidth; idx++) {
       this.ctx.beginPath();
       this.ctx.moveTo(this.tileSize * idx, 0);
-      this.ctx.lineTo(this.tileSize * idx, GameUtils.DIM_Y);
+      this.ctx.lineTo(this.tileSize * idx, GameUtils.TILE_SIZE * GameUtils.GRID_HEIGHT);
       this.ctx.stroke();
     }
     for (let idx = 0; idx < this.gridHeight; idx++) {
