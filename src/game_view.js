@@ -31,15 +31,24 @@ class GameView {
   }
 
   animate() {
-    this.game.stepDown();
-    this.game.draw(this.ctx);
     setTimeout(() => {
-      requestAnimationFrame(this.animate);
+      this.game.stepDown();
+      this.game.draw(this.ctx);
+      if (this.game.gameOver()) {
+        return this.stop();
+      } else {
+        requestAnimationFrame(this.animate);
+      }
     }, 1000);
   }
 
   start() {
-    requestAnimationFrame(this.animate);
+    this.game.draw(this.ctx);
+    this.animation = requestAnimationFrame(this.animate);
+  }
+
+  stop() {
+    cancelAnimationFrame(this.animation);
   }
 }
 

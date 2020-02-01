@@ -36,7 +36,6 @@ class Game {
     return this.currPiece.blocks.map(block => func(block));
   }
 
-  // Checks if a block is occupied, within bounds, not necessarily an integer
   checkBlock(block) {
     let [xPos, yPos] = block.pos;
     if (xPos >= 0 && xPos < GameUtils.GRID_WIDTH) {
@@ -45,19 +44,24 @@ class Game {
     return false;
   }
 
-  // Shifts a single row down, but leaves an empty square
+  // Issue: Multi row clears with a gap in between leaves empty row in the middle
   shiftRowDown(grid, rowIdx) {
-    const row = grid[rowIdx - 1];
-    if (row) {
-      row.map(block => {
-        if (block) { block.pos[1] += 1 }
-      });
+    for (let idx = rowIdx; idx > 0; idx--) {
+      if (idx <= rowIdx) {
+        for (let jdx = 0; jdx < grid[0].length; jdx++) {
+          grid[idx][jdx] = grid[idx - 1][jdx];
+          if (grid[idx][jdx]) {
+            grid[idx][jdx].pos[1] += 1;
+          }
+        }
+      }
     }
+    grid[0] = new Array(grid[0].length);
   }
 
   clearRow() {
     // Keep track of rows that have been cleared
-    // const clearedRows = [];
+    let clearedRows = [];
 
     // Construct a transposed game board to check for filled rows
     const transposed = new Array(this.gridHeight).fill(0).map(() => {
@@ -71,23 +75,22 @@ class Game {
     for (let idx = 0; idx < transposed.length; idx++) {
       const row = transposed[idx];
       if (row.every(block => block)) {
-        // clearedRows.push(idx);
-        for (let jdx = 0; jdx < transposed[0].length; jdx++) {
+        clearedRows.push(idx);
+        for (let jdx = 0; jdx < row.length; jdx++) {
           const currBlock = transposed[idx][jdx];
           currBlock.toggleOff();
         }
       }
     }
 
-    // console.log(clearedRows);
-    // clearedRows = clearedRows.reverse();
-    // console.log(clearedRows);
-    // clearedRows.forEach(rowIdx => {
-    //   console.log(rowIdx);
-    //   this.shiftRowDown(transposed, rowIdx);
-    // });
+    clearedRows = clearedRows.reverse();
+    clearedRows.forEach(rowIdx => this.shiftRowDown(transposed, rowIdx));
 
-    // Clear clearedRows
+    for (let idx = 0; idx < this.filledTiles.length; idx++) {
+      for (let jdx = 0; jdx < this.filledTiles[0].length; jdx++) {
+        this.filledTiles[idx][jdx] = transposed[jdx][idx];
+      }
+    }
   }
 
   checkCollisions() {
@@ -150,6 +153,13 @@ class Game {
 
   rotatePiece() {
     this.currPiece.rotate();
+  }
+
+  gameOver() {
+    if (this.filledTiles[3][0] || this.filledTiles[4][0] || this.filledTiles[5][0] || this.filledTiles[6][0]) {
+      return true;
+    }
+    return false;
   }
 }
 
