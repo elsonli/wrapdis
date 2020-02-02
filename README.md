@@ -26,6 +26,7 @@ Bandori Tetris is a fully interactive JavaScript and HTML5 Canvas game based on 
 ## Feature Implementation Issues
 * Randomly generating pieces to be drawn onto the canvas
   * An object containing all of the Tetrominos was sampled and a piece was constructed from that sample
+  * Since positions are stored as arrays for a tetromino, the sampled object needs to be stringified and parsed to create a deep copy of the object - otherwise, updating the position for the sample would affect the original
   ```javascript
   generateNextPiece() {
     const allTetrominoKeys = Object.keys(allTetrominos);
