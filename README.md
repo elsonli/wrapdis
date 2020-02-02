@@ -31,7 +31,6 @@ Bandori Tetris is a fully interactive JavaScript and HTML5 Canvas game based on 
     const allTetrominoKeys = Object.keys(allTetrominos);
     const randKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
     const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randKey]))
-    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoL"]));
     this.currPiece = new Piece(randTetromino, this, this.ctx);
     return this.currPiece;
   }
