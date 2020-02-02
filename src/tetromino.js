@@ -5,7 +5,7 @@ export const allTetrominos = {
     block3: [5, -2],
     block4: [6, -2],
     orientation: 0,
-    color: "lightblue",
+    color: "cyan",
     image: "https://cdn.discordapp.com/emojis/645009599870664715.png?v=1"
   },
   tetrominoS: {
@@ -41,7 +41,7 @@ export const allTetrominos = {
     block3: [4, -2],
     block4: [5, -2],
     orientation: 0,
-    color: "purple",
+    color: "magenta",
     image: "https://cdn.discordapp.com/emojis/648743727895937044.png?v=1"
   },
   tetrominoJ: {
