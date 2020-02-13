@@ -15,13 +15,13 @@ class Piece {
     ];
     this.color = tetromino.color;
     this.orientation = tetromino.orientation;
-    this.image = new Image();
-    this.image.src = tetromino.image;
+    // this.image = new Image();
+    // this.image.src = tetromino.image;
     this.game = game;
 
     this.applyToBlocks = this.applyToBlocks.bind(this);
     this.draw = this.draw.bind(this);
-    this.drawPieceImage = this.drawPieceImage.bind(this);
+    // this.drawPieceImage = this.drawPieceImage.bind(this);
     this.drawPieceBackground = this.drawPieceBackground.bind(this);
   }
 
@@ -50,23 +50,23 @@ class Piece {
     }
   }
 
-  drawPieceImage(block, ctx) {
-    const tileSize = this.game.tileSize;
-    if (block.filled) {
-      ctx.drawImage(
-        this.image,
-        block.pos[0] * tileSize,
-        block.pos[1] * tileSize,
-        tileSize,
-        tileSize
-      );
-    }
-  }
+  // drawPieceImage(block, ctx) {
+  //   const tileSize = this.game.tileSize;
+  //   if (block.filled) {
+  //     ctx.drawImage(
+  //       this.image,
+  //       block.pos[0] * tileSize,
+  //       block.pos[1] * tileSize,
+  //       tileSize,
+  //       tileSize
+  //     );
+  //   }
+  // }
 
   draw(ctx) {
     ctx.fillStyle = this.color;
     this.applyToBlocks(this.drawPieceBackground, ctx);
-    this.applyToBlocks(this.drawPieceImage, ctx);
+    // this.applyToBlocks(this.drawPieceImage, ctx);
 
     // Constructing the Grid
     ctx.strokeStyle = "#777777";
