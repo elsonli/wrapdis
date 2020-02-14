@@ -16,12 +16,13 @@ class Game {
     this.gridColor = GameUtils.BG_COLOR;
     this.tileSize = GameUtils.TILE_SIZE;
 
-    this.currPiece = this.generatePiece();
-
     // this.shiftRowDown = this.shiftRowDown.bind(this);
     this.tilesOccupied = new Array(this.gridWidth).fill(0).map(() => {
-      return new Array(this.gridHeight);
+      return new Array(this.gridHeight).fill(false);
     });
+
+    this.currPiece = this.generatePiece();
+    // this.currPiece.updatePosition(true);
   }
   
   // Returns a new and random Piece
@@ -128,11 +129,11 @@ class Game {
   // }
 
   stepDown() {
-    if (this.currPiece.validPosition() && !this.currPiece.tileOccupied()) {
-      console.log("tru")
+    if (this.currPiece.validPosition()) {
       this.currPiece.moveDown();
     } else {
       this.pieces.push(this.currPiece);
+      this.currPiece.updatePosition(true);
       this.currPiece = this.generatePiece();
     }
 //     if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }

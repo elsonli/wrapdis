@@ -3,98 +3,19 @@ import * as GameUtils from "./utils";
 
 class Piece {
   constructor(tetromino, game) {
-    // ({ block1: this.block1,
-    //    block2: this.block2,
-    //    block3: this.block3,
-    //    block4: this.block4 } = tetromino);
-    // this.blocks = [
-    //   new Block(this.block1),
-    //   new Block(this.block2),
-    //   new Block(this.block3),
-    //   new Block(this.block4)
-    // ];
     this.pos = [3, -2];
     this.color = tetromino.color;
     this.orientation = tetromino.orientation;
     this.orientations = tetromino.orientations;
-    // this.image = new Image();
-    // this.image.src = tetromino.image;
     this.game = game;
 
-    // this.applyToBlocks = this.applyToBlocks.bind(this);
-    // this.draw = this.draw.bind(this);
-    // this.drawPieceImage = this.drawPieceImage.bind(this);
-    // this.drawPieceBackground = this.drawPieceBackground.bind(this);
+    this.updatePosition = this.updatePosition.bind(this);
   }
-
-  // applyToBlocks(func, ctx) {
-  //   this.blocks.map(block => func(block, ctx));
-  // };
-
-  // Draws a Piece with its color and background image
-  // drawPieceBackground(block, ctx) {
-  //   const tileSize = this.game.tileSize;
-  //   if (block.filled) {
-  //     ctx.fillRect(
-  //       block.pos[0] * tileSize,
-  //       block.pos[1] * tileSize,
-  //       tileSize,
-  //       tileSize
-  //     );
-  //   } else {
-  //     ctx.fillStyle = "black";
-  //     ctx.fillRect(
-  //       block.pos[0] * tileSize,
-  //       block.pos[1] * tileSize,
-  //       tileSize,
-  //       tileSize
-  //     );
-  //   }
-  // }
-
-  // drawPieceImage(block, ctx) {
-  //   const tileSize = this.game.tileSize;
-  //   if (block.filled) {
-  //     ctx.drawImage(
-  //       this.image,
-  //       block.pos[0] * tileSize,
-  //       block.pos[1] * tileSize,
-  //       tileSize,
-  //       tileSize
-  //     );
-  //   }
-  // }
 
   calculateShift(shiftAmt) {
     let xShift = Math.abs(15 - shiftAmt) % 4;
     let yShift = Math.floor((15 - shiftAmt) / 4);
     return [xShift, yShift];
-  }
-
-  // Returns a boolean whether or not the position is off the grid vertically
-  validPosition() {
-    let [xPos, yPos] = this.pos;
-    let currOrientation = this.orientations[this.orientation];
-    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
-      let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
-      if (currBit && yPos + yShift + 1 >= this.game.gridHeight) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  // Returns a boolean whether or not the tile is already occupied
-  tileOccupied() {
-    let [xPos, yPos] = this.pos;
-    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
-      if (this.game.tilesOccupied[xPos + xShift][yPos + yShift]) {
-        return true;
-      }
-    }
-    return false;
   }
 
   draw() {
@@ -127,42 +48,39 @@ class Piece {
         // );
       }
     }
+  }
 
+  // Returns a boolean whether or not the next position is valid
+  validPosition() {
+    let [xPos, yPos] = this.pos;
+    let currOrientation = this.orientations[this.orientation];
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let tileOccupied = this.game.tilesOccupied[xPos + xShift][yPos + yShift + 1];
+      let notWithinBounds = (yPos + yShift + 1) >= this.game.gridHeight;
+      if (currBit && (tileOccupied || notWithinBounds)) {
+        console.log(this.game.tilesOccupied);
+        return false;
+      }
+    }
+    return true;
+  }
 
-  //   this.applyToBlocks(this.drawPieceBackground, ctx);
-    // this.applyToBlocks(this.drawPieceImage, ctx);
-
-    // Constructing the Grid
-  //   ctx.strokeStyle = "#777777";
-  //   for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
-  //     ctx.beginPath();
-  //     ctx.moveTo(GameUtils.TILE_SIZE * idx, 0);
-  //     ctx.lineTo(GameUtils.TILE_SIZE * idx, GameUtils.TILE_SIZE * GameUtils.GRID_HEIGHT);
-  //     ctx.stroke();
-  //   }
-  //   for (let idx = 0; idx <= GameUtils.GRID_HEIGHT; idx++) {
-  //     ctx.beginPath();
-  //     ctx.moveTo(0, GameUtils.TILE_SIZE * idx)
-  //     ctx.lineTo(GameUtils.DIM_X, GameUtils.TILE_SIZE * idx);
-  //     ctx.stroke();
-  //   }
-  // }
-
-  // fillTiles(filledTiles, bool) {
-  //   this.applyToBlocks(block => {
-  //     let [xPos, yPos] = block.pos;
-  //     if (bool) {
-  //       filledTiles[xPos][yPos] = block;
-  //     } else {
-  //       filledTiles[xPos][yPos] = undefined;
-  //     }
-  //   });
+  updatePosition(bool) {
+    let [xPos, yPos] = this.pos;
+    let currOrientation = this.orientations[this.orientation];
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      if (currBit) {
+        this.game.tilesOccupied[xPos + xShift][yPos + yShift] = bool;
+      }
+    }
   }
 
   moveDown() {
-    console.log(this.pos);
     this.pos[1] += 1;
-    console.log(this.pos);
   }
 
   // Direction 0: Moving horizontally
