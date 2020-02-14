@@ -3,52 +3,54 @@ import * as GameUtils from "./utils";
 
 class Piece {
   constructor(tetromino, game) {
-    ({ block1: this.block1,
-       block2: this.block2,
-       block3: this.block3,
-       block4: this.block4 } = tetromino);
-    this.blocks = [
-      new Block(this.block1),
-      new Block(this.block2),
-      new Block(this.block3),
-      new Block(this.block4)
-    ];
+    // ({ block1: this.block1,
+    //    block2: this.block2,
+    //    block3: this.block3,
+    //    block4: this.block4 } = tetromino);
+    // this.blocks = [
+    //   new Block(this.block1),
+    //   new Block(this.block2),
+    //   new Block(this.block3),
+    //   new Block(this.block4)
+    // ];
+    this.pos = [3, -2];
     this.color = tetromino.color;
     this.orientation = tetromino.orientation;
+    this.orientations = tetromino.orientations;
     // this.image = new Image();
     // this.image.src = tetromino.image;
     this.game = game;
 
-    this.applyToBlocks = this.applyToBlocks.bind(this);
-    this.draw = this.draw.bind(this);
+    // this.applyToBlocks = this.applyToBlocks.bind(this);
+    // this.draw = this.draw.bind(this);
     // this.drawPieceImage = this.drawPieceImage.bind(this);
-    this.drawPieceBackground = this.drawPieceBackground.bind(this);
+    // this.drawPieceBackground = this.drawPieceBackground.bind(this);
   }
 
-  applyToBlocks(func, ctx) {
-    this.blocks.map(block => func(block, ctx));
-  };
+  // applyToBlocks(func, ctx) {
+  //   this.blocks.map(block => func(block, ctx));
+  // };
 
   // Draws a Piece with its color and background image
-  drawPieceBackground(block, ctx) {
-    const tileSize = this.game.tileSize;
-    if (block.filled) {
-      ctx.fillRect(
-        block.pos[0] * tileSize,
-        block.pos[1] * tileSize,
-        tileSize,
-        tileSize
-      );
-    } else {
-      ctx.fillStyle = "black";
-      ctx.fillRect(
-        block.pos[0] * tileSize,
-        block.pos[1] * tileSize,
-        tileSize,
-        tileSize
-      );
-    }
-  }
+  // drawPieceBackground(block, ctx) {
+  //   const tileSize = this.game.tileSize;
+  //   if (block.filled) {
+  //     ctx.fillRect(
+  //       block.pos[0] * tileSize,
+  //       block.pos[1] * tileSize,
+  //       tileSize,
+  //       tileSize
+  //     );
+  //   } else {
+  //     ctx.fillStyle = "black";
+  //     ctx.fillRect(
+  //       block.pos[0] * tileSize,
+  //       block.pos[1] * tileSize,
+  //       tileSize,
+  //       tileSize
+  //     );
+  //   }
+  // }
 
   // drawPieceImage(block, ctx) {
   //   const tileSize = this.game.tileSize;
@@ -63,336 +65,404 @@ class Piece {
   //   }
   // }
 
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-    this.applyToBlocks(this.drawPieceBackground, ctx);
+  calculateShift(shiftAmt) {
+    let xShift = Math.abs(15 - shiftAmt) % 4;
+    let yShift = Math.floor((15 - shiftAmt) / 4);
+    return [xShift, yShift];
+  }
+
+  // Returns a boolean whether or not the position is off the grid vertically
+  validPosition() {
+    let [xPos, yPos] = this.pos;
+    let currOrientation = this.orientations[this.orientation];
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      if (currBit && yPos + yShift + 1 >= this.game.gridHeight) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Returns a boolean whether or not the tile is already occupied
+  tileOccupied() {
+    let [xPos, yPos] = this.pos;
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      if (this.game.tilesOccupied[xPos + xShift][yPos + yShift]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  draw() {
+    let [xPos, yPos] = this.pos;
+    
+    // Iterates over the bits in currOrientation (ex: 0x0F00) from left to right
+    let currOrientation = this.orientations[this.orientation];
+
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+
+      // Only need to color in the blocks with a 1 bit
+      if (currBit) {
+        this.game.ctx.fillStyle = this.color;
+        this.game.ctx.fillRect(
+          (xPos + xShift) * this.game.tileSize,
+          (yPos + yShift) * this.game.tileSize,
+          this.game.tileSize,
+          this.game.tileSize
+        );
+      } else {
+        // REMOVE
+        // this.game.ctx.fillStyle = "#444444";
+        // this.game.ctx.fillRect(
+        //   (xPos + xShift) * this.game.tileSize,
+        //   (yPos + yShift) * this.game.tileSize,
+        //   this.game.tileSize,
+        //   this.game.tileSize
+        // );
+      }
+    }
+
+
+  //   this.applyToBlocks(this.drawPieceBackground, ctx);
     // this.applyToBlocks(this.drawPieceImage, ctx);
 
     // Constructing the Grid
-    ctx.strokeStyle = "#777777";
-    for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
-      ctx.beginPath();
-      ctx.moveTo(GameUtils.TILE_SIZE * idx, 0);
-      ctx.lineTo(GameUtils.TILE_SIZE * idx, GameUtils.TILE_SIZE * GameUtils.GRID_HEIGHT);
-      ctx.stroke();
-    }
-    for (let idx = 0; idx <= GameUtils.GRID_HEIGHT; idx++) {
-      ctx.beginPath();
-      ctx.moveTo(0, GameUtils.TILE_SIZE * idx)
-      ctx.lineTo(GameUtils.DIM_X, GameUtils.TILE_SIZE * idx);
-      ctx.stroke();
-    }
+  //   ctx.strokeStyle = "#777777";
+  //   for (let idx = 0; idx < GameUtils.GRID_WIDTH; idx++) {
+  //     ctx.beginPath();
+  //     ctx.moveTo(GameUtils.TILE_SIZE * idx, 0);
+  //     ctx.lineTo(GameUtils.TILE_SIZE * idx, GameUtils.TILE_SIZE * GameUtils.GRID_HEIGHT);
+  //     ctx.stroke();
+  //   }
+  //   for (let idx = 0; idx <= GameUtils.GRID_HEIGHT; idx++) {
+  //     ctx.beginPath();
+  //     ctx.moveTo(0, GameUtils.TILE_SIZE * idx)
+  //     ctx.lineTo(GameUtils.DIM_X, GameUtils.TILE_SIZE * idx);
+  //     ctx.stroke();
+  //   }
+  // }
+
+  // fillTiles(filledTiles, bool) {
+  //   this.applyToBlocks(block => {
+  //     let [xPos, yPos] = block.pos;
+  //     if (bool) {
+  //       filledTiles[xPos][yPos] = block;
+  //     } else {
+  //       filledTiles[xPos][yPos] = undefined;
+  //     }
+  //   });
   }
 
-  fillTiles(filledTiles, bool) {
-    this.applyToBlocks(block => {
-      let [xPos, yPos] = block.pos;
-      if (bool) {
-        filledTiles[xPos][yPos] = block;
-      } else {
-        filledTiles[xPos][yPos] = undefined;
-      }
-    });
+  moveDown() {
+    console.log(this.pos);
+    this.pos[1] += 1;
+    console.log(this.pos);
   }
 
   // Direction 0: Moving horizontally
   // Direction 1: Moving vertically
   // Amount -1: Moving left
   // Amount 1: Moving right
-  move(filledTiles, direction, amount) {
+  // move(filledTiles, direction, amount) {
     
-    if (direction === 0) {
-      if ((amount === 1) && (this.blocks.map(block => {
-        return block.pos[0] === GameUtils.GRID_WIDTH - 1;
-      }).some(ele => ele))) {
-        this.fillTiles(filledTiles, undefined);
-        this.applyToBlocks(block => block.pos[direction] += 0);
-      } else if ((amount === -1) && (this.blocks.map(block => {
-        return block.pos[0] === 0;
-      }).some(ele => ele))) {
-        this.fillTiles(filledTiles, undefined);
-        this.applyToBlocks(block => block.pos[direction] += 0);
-      } else {
-        this.fillTiles(filledTiles, undefined);
-        this.applyToBlocks(block => block.pos[direction] += amount);
-      }
-    } else {
+  //   if (direction === 0) {
+  //     if ((amount === 1) && (this.blocks.map(block => {
+  //       return block.pos[0] === GameUtils.GRID_WIDTH - 1;
+  //     }).some(ele => ele))) {
+  //       this.fillTiles(filledTiles, undefined);
+  //       this.applyToBlocks(block => block.pos[direction] += 0);
+  //     } else if ((amount === -1) && (this.blocks.map(block => {
+  //       return block.pos[0] === 0;
+  //     }).some(ele => ele))) {
+  //       this.fillTiles(filledTiles, undefined);
+  //       this.applyToBlocks(block => block.pos[direction] += 0);
+  //     } else {
+  //       this.fillTiles(filledTiles, undefined);
+  //       this.applyToBlocks(block => block.pos[direction] += amount);
+  //     }
+  //   } else {
       // Direction is 1
-      if (
-        (this.blocks.map(block => block.pos[1] + 1 <= GameUtils.GRID_HEIGHT - 1)).some(ele => ele) ||
-        (this.blocks.map(block => filledTiles[block.pos[0]][block.pos[1]] + 1)).some(ele => ele)
-      ) {
-        this.applyToBlocks(block => block.pos[direction] += amount);
-      } else {
-        this.applyToBlocks(block => block.pos[direction] += amount);
-        this.fillTiles(filledTiles, true);
-      }
-    }
-  }
+  //     if (
+  //       (this.blocks.map(block => block.pos[1] + 1 <= GameUtils.GRID_HEIGHT - 1)).some(ele => ele) ||
+  //       (this.blocks.map(block => filledTiles[block.pos[0]][block.pos[1]] + 1)).some(ele => ele)
+  //     ) {
+  //       this.applyToBlocks(block => block.pos[direction] += amount);
+  //     } else {
+  //       this.applyToBlocks(block => block.pos[direction] += amount);
+  //       this.fillTiles(filledTiles, true);
+  //     }
+  //   }
+  // }
 
   rotate() {
-    if (this.orientation === 0) {
-      if (this.color === "cyan") {
-        this.blocks[0].pos[0] += 2;
-        this.blocks[0].pos[1] += -1;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 1;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 2;
-      } else if (this.color === "green") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += 2;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "red") {
-        this.blocks[0].pos[0] += 2;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "yellow") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += 0;
-      } else if (this.color === "magenta") {
-        this.blocks[0].pos[0] += 1;
-        this.blocks[0].pos[1] += 1;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "blue") {
-        this.blocks[0].pos[0] += 2;
-        this.blocks[0].pos[1] += -1;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += -2;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += -1;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 0;
-      } else {
-        this.blocks[0].pos[0] += 1;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 1;
-        this.blocks[3].pos[0] += 2;
-        this.blocks[3].pos[1] += 1;
-      }
-    } else if (this.orientation === 1) {
-      if (this.color === "cyan") {
-        this.blocks[0].pos[0] += -2;
-        this.blocks[0].pos[1] += 2;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "green") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += -2;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "red") {
-        this.blocks[0].pos[0] += -2;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "yellow") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += 0;
-      } else if (this.color === "magenta") {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += 1;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "blue") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 1;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += -1;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += -2;
-      } else {
-        this.blocks[0].pos[0] += 1;
-        this.blocks[0].pos[1] += 1;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 2;
-        this.blocks[2].pos[0] += -1;
-        this.blocks[2].pos[1] += 1;
-        this.blocks[3].pos[0] += -2;
-        this.blocks[3].pos[1] += 0;
-      }
-    } else if (this.orientation === 2) {
-      if (this.color === "cyan") {
-        this.blocks[0].pos[0] += 1;
-        this.blocks[0].pos[1] += -2;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += -1;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -2;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "green") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += 2;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "red") {
-        this.blocks[0].pos[0] += 2;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "yellow") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += 0;
-      } else if (this.color === "magenta") {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += -1;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "blue") {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += 1;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 2;
-        this.blocks[3].pos[1] += -1;
-      } else {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += 1;
-        this.blocks[1].pos[0] += -2;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += -1;
-        this.blocks[2].pos[1] += -1;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += -2;
-      }
-    } else {
-      if (this.color === "cyan") {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += 1;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 1;
-        this.blocks[2].pos[1] += -1;
-        this.blocks[3].pos[0] += 2;
-        this.blocks[3].pos[1] += -2;
-      } else if (this.color === "green") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += 1;
-        this.blocks[2].pos[0] += -2;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += -1;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "red") {
-        this.blocks[0].pos[0] += -2;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += -1;
-      } else if (this.color === "yellow") {
-        this.blocks[0].pos[0] += 0;
-        this.blocks[0].pos[1] += 0;
-        this.blocks[1].pos[0] += 0;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += 0;
-      } else if (this.color === "magenta") {
-        this.blocks[0].pos[0] += 1;
-        this.blocks[0].pos[1] += -1;
-        this.blocks[1].pos[0] += -1;
-        this.blocks[1].pos[1] += -1;
-        this.blocks[2].pos[0] += 0;
-        this.blocks[2].pos[1] += 0;
-        this.blocks[3].pos[0] += 1;
-        this.blocks[3].pos[1] += 1;
-      } else if (this.color === "blue") {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += -1;
-        this.blocks[1].pos[0] += -2;
-        this.blocks[1].pos[1] += 0;
-        this.blocks[2].pos[0] += -1;
-        this.blocks[2].pos[1] += 1;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += 2;
-      } else {
-        this.blocks[0].pos[0] += -1;
-        this.blocks[0].pos[1] += -2;
-        this.blocks[1].pos[0] += 1;
-        this.blocks[1].pos[1] += -2;
-        this.blocks[2].pos[0] += 2;
-        this.blocks[2].pos[1] += -1;
-        this.blocks[3].pos[0] += 0;
-        this.blocks[3].pos[1] += 1;
-      }
-    }
-    this.orientation = (this.orientation + 1) % 4;
+  //   if (this.orientation === 0) {
+  //     if (this.color === "cyan") {
+  //       this.blocks[0].pos[0] += 2;
+  //       this.blocks[0].pos[1] += -1;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 1;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 2;
+  //     } else if (this.color === "green") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += 2;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "red") {
+  //       this.blocks[0].pos[0] += 2;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "yellow") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += 0;
+  //     } else if (this.color === "magenta") {
+  //       this.blocks[0].pos[0] += 1;
+  //       this.blocks[0].pos[1] += 1;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "blue") {
+  //       this.blocks[0].pos[0] += 2;
+  //       this.blocks[0].pos[1] += -1;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += -2;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += -1;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 0;
+  //     } else {
+  //       this.blocks[0].pos[0] += 1;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 1;
+  //       this.blocks[3].pos[0] += 2;
+  //       this.blocks[3].pos[1] += 1;
+  //     }
+  //   } else if (this.orientation === 1) {
+  //     if (this.color === "cyan") {
+  //       this.blocks[0].pos[0] += -2;
+  //       this.blocks[0].pos[1] += 2;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "green") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += -2;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "red") {
+  //       this.blocks[0].pos[0] += -2;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "yellow") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += 0;
+  //     } else if (this.color === "magenta") {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += 1;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "blue") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 1;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += -1;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += -2;
+  //     } else {
+  //       this.blocks[0].pos[0] += 1;
+  //       this.blocks[0].pos[1] += 1;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 2;
+  //       this.blocks[2].pos[0] += -1;
+  //       this.blocks[2].pos[1] += 1;
+  //       this.blocks[3].pos[0] += -2;
+  //       this.blocks[3].pos[1] += 0;
+  //     }
+  //   } else if (this.orientation === 2) {
+  //     if (this.color === "cyan") {
+  //       this.blocks[0].pos[0] += 1;
+  //       this.blocks[0].pos[1] += -2;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += -1;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -2;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "green") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += 2;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "red") {
+  //       this.blocks[0].pos[0] += 2;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "yellow") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += 0;
+  //     } else if (this.color === "magenta") {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += -1;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "blue") {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += 1;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 2;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += 1;
+  //       this.blocks[1].pos[0] += -2;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += -1;
+  //       this.blocks[2].pos[1] += -1;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += -2;
+  //     }
+  //   } else {
+  //     if (this.color === "cyan") {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += 1;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 1;
+  //       this.blocks[2].pos[1] += -1;
+  //       this.blocks[3].pos[0] += 2;
+  //       this.blocks[3].pos[1] += -2;
+  //     } else if (this.color === "green") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += 1;
+  //       this.blocks[2].pos[0] += -2;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += -1;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "red") {
+  //       this.blocks[0].pos[0] += -2;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += -1;
+  //     } else if (this.color === "yellow") {
+  //       this.blocks[0].pos[0] += 0;
+  //       this.blocks[0].pos[1] += 0;
+  //       this.blocks[1].pos[0] += 0;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += 0;
+  //     } else if (this.color === "magenta") {
+  //       this.blocks[0].pos[0] += 1;
+  //       this.blocks[0].pos[1] += -1;
+  //       this.blocks[1].pos[0] += -1;
+  //       this.blocks[1].pos[1] += -1;
+  //       this.blocks[2].pos[0] += 0;
+  //       this.blocks[2].pos[1] += 0;
+  //       this.blocks[3].pos[0] += 1;
+  //       this.blocks[3].pos[1] += 1;
+  //     } else if (this.color === "blue") {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += -1;
+  //       this.blocks[1].pos[0] += -2;
+  //       this.blocks[1].pos[1] += 0;
+  //       this.blocks[2].pos[0] += -1;
+  //       this.blocks[2].pos[1] += 1;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += 2;
+  //     } else {
+  //       this.blocks[0].pos[0] += -1;
+  //       this.blocks[0].pos[1] += -2;
+  //       this.blocks[1].pos[0] += 1;
+  //       this.blocks[1].pos[1] += -2;
+  //       this.blocks[2].pos[0] += 2;
+  //       this.blocks[2].pos[1] += -1;
+  //       this.blocks[3].pos[0] += 0;
+  //       this.blocks[3].pos[1] += 1;
+  //     }
+  //   }
+  //   this.orientation = (this.orientation + 1) % 4;
   }
 }
 
