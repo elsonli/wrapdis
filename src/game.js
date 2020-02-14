@@ -95,6 +95,9 @@ class Game {
     while (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
     }
+    this.pieces.push(this.currPiece);
+    this.currPiece.updatePosition(true);
+    this.currPiece = this.generatePiece();
   }
 
 //   rotatePiece() {
