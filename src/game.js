@@ -37,57 +37,6 @@ class Game {
     return new Piece(randTetromino, this);
   }
 
-  // Issue: Multi row clears with a gap in between leaves empty row in the middle
-  // shiftRowDown(grid, rowIdx) {
-  //   for (let idx = rowIdx; idx > 0; idx--) {
-  //     if (idx <= rowIdx) {
-  //       for (let jdx = 0; jdx < grid[0].length; jdx++) {
-  //         grid[idx][jdx] = grid[idx - 1][jdx];
-  //         if (grid[idx][jdx]) {
-  //           grid[idx][jdx].pos[1] += 1;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   grid[0] = new Array(grid[0].length);
-  // }
-
-  // clearRow() {
-    // Keep track of rows that have been cleared
-    // let clearedRows = [];
-
-    // Construct a transposed game board to check for filled rows
-  //   const transposed = new Array(this.gridHeight).fill(0).map(() => {
-  //     return new Array(this.gridWidth);
-  //   });
-  //   for (let idx = 0; idx < transposed.length; idx++) {
-  //     for (let jdx = 0; jdx < transposed[0].length; jdx++) {
-  //       transposed[idx][jdx] = this.filledTiles[jdx][idx];
-  //     }
-  //   }
-  //   for (let idx = 0; idx < transposed.length; idx++) {
-  //     const row = transposed[idx];
-  //     if (row.every(block => block)) {
-  //       clearedRows.push(idx);
-  //       for (let jdx = 0; jdx < row.length; jdx++) {
-  //         const currBlock = transposed[idx][jdx];
-  //         currBlock.toggleOff();
-  //       }
-  //     }
-  //   }
-
-  //   clearedRows = clearedRows.reverse();
-  //   clearedRows.forEach(rowIdx => this.shiftRowDown(transposed, rowIdx));
-
-  //   for (let idx = 0; idx < this.filledTiles.length; idx++) {
-  //     for (let jdx = 0; jdx < this.filledTiles[0].length; jdx++) {
-  //       this.filledTiles[idx][jdx] = transposed[jdx][idx];
-  //     }
-  //   }
-
-  //   this.score += clearedRows.length;
-  // }
-
   draw() {
     // Background for the grid
     this.ctx.clearRect(0, 0, this.dimX, this.dimY);
@@ -142,9 +91,11 @@ class Game {
     }
   }
 
-//   dropPiece() {
-//     while (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
-//   }
+  dropPiece() {
+    while (this.currPiece.validVertical()) {
+      this.currPiece.moveDown();
+    }
+  }
 
 //   rotatePiece() {
 //     this.currPiece.rotate();

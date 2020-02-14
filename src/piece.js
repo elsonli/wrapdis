@@ -23,12 +23,17 @@ class Piece {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
       let [xShift, yShift] = this.calculateShift(shiftAmt);
 
+      // Calculate new positions - newXPos needs to account for negative modulos
+      let newXPos = (xPos + xShift) % this.game.gridWidth;
+      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newYPos = yPos + yShift;
+
       // Only need to color in the blocks with a 1 bit
       if (currBit) {
         this.game.ctx.fillStyle = this.color;
         this.game.ctx.fillRect(
-          (xPos + xShift) * this.game.tileSize,
-          (yPos + yShift) * this.game.tileSize,
+          newXPos * this.game.tileSize,
+          newYPos * this.game.tileSize,
           this.game.tileSize,
           this.game.tileSize
         );
@@ -36,8 +41,8 @@ class Piece {
         // REMOVE
         // this.game.ctx.fillStyle = "#444444";
         // this.game.ctx.fillRect(
-        //   (xPos + xShift) * this.game.tileSize,
-        //   (yPos + yShift) * this.game.tileSize,
+        //   newXPos * this.game.tileSize,
+        //   newYPos * this.game.tileSize,
         //   this.game.tileSize,
         //   this.game.tileSize
         // );
@@ -52,12 +57,14 @@ class Piece {
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
       let [xShift, yShift] = this.calculateShift(shiftAmt);
-      let tileOccupied = this.game.tilesOccupied[xPos + xShift + direction][yPos + yShift];
-      // let notWithinBounds = (yPos + yShift + 1) >= this.game.gridHeight;
-      if (currBit && (tileOccupied)) {
-        console.log(this.game.tilesOccupied);
-        return false;
-      }
+
+      // Calculate new positions - newXPos needs to account for negative modulos
+      let newXPos = (xPos + xShift + direction) % this.game.gridWidth;
+      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newYPos = yPos + yShift;
+
+      let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
+      if (currBit && tileOccupied) return false;
     }
     return true;
   }
@@ -69,12 +76,15 @@ class Piece {
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
       let [xShift, yShift] = this.calculateShift(shiftAmt);
-      let tileOccupied = this.game.tilesOccupied[xPos + xShift][yPos + yShift + 1];
+
+      // Calculate new positions - newXPos needs to account for negative modulos
+      let newXPos = (xPos + xShift) % this.game.gridWidth;
+      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newYPos = yPos + yShift + 1;
+
+      let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
       let notWithinBounds = (yPos + yShift + 1) >= this.game.gridHeight;
-      if (currBit && (tileOccupied || notWithinBounds)) {
-        console.log(this.game.tilesOccupied);
-        return false;
-      }
+      if (currBit && (tileOccupied || notWithinBounds)) return false;
     }
     return true;
   }
@@ -85,9 +95,13 @@ class Piece {
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
       let [xShift, yShift] = this.calculateShift(shiftAmt);
-      if (currBit) {
-        this.game.tilesOccupied[xPos + xShift][yPos + yShift] = bool;
-      }
+
+      // Calculate new positions - newXPos needs to account for negative modulos
+      let newXPos = (xPos + xShift) % this.game.gridWidth;
+      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newYPos = yPos + yShift;
+
+      if (currBit) this.game.tilesOccupied[newXPos][newYPos] = bool;
     }
   }
 

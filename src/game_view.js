@@ -29,6 +29,7 @@ class GameView {
           case "Space":
             this.game.dropPiece();
             this.game.draw(this.ctx);
+            break;
         }
       }
     };
