@@ -6,6 +6,7 @@ class Game {
   constructor(ctx, controller) {
     this.ctx = ctx;
     this.pieces = [];
+    this.gameOver = false;
     this.controller = controller;
     // this.score = 0;
 
@@ -22,7 +23,6 @@ class Game {
     });
 
     this.currPiece = this.generatePiece();
-    // this.currPiece.updatePosition(true);
   }
   
   // Returns a new and random Piece
@@ -120,23 +120,26 @@ class Game {
     this.currPiece.draw(this.ctx);
   }
 
-//   stepRight() {
-//     if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, 1) }
-//   }
+  stepRight() {
+    if (this.currPiece.validHorizontal(1)) {
+      this.currPiece.moveRight();
+    }
+  }
 
-  // stepLeft() {
-    // if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 0, -1) }
-  // }
+  stepLeft() {
+    if (this.currPiece.validHorizontal(-1)) {
+      this.currPiece.moveLeft();
+    }
+  }
 
   stepDown() {
-    if (this.currPiece.validPosition()) {
+    if (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
     } else {
       this.pieces.push(this.currPiece);
       this.currPiece.updatePosition(true);
       this.currPiece = this.generatePiece();
     }
-//     if (!this.checkCollisions()) { this.currPiece.move(this.filledTiles, 1, 1) }
   }
 
 //   dropPiece() {

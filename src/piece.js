@@ -1,15 +1,10 @@
-import Block from "./block";
-import * as GameUtils from "./utils";
-
 class Piece {
   constructor(tetromino, game) {
-    this.pos = [3, -2];
+    this.game = game;
     this.color = tetromino.color;
+    this.pos = [Math.floor(this.game.gridWidth / 2) - 1, -2];
     this.orientation = tetromino.orientation;
     this.orientations = tetromino.orientations;
-    this.game = game;
-
-    this.updatePosition = this.updatePosition.bind(this);
   }
 
   calculateShift(shiftAmt) {
@@ -50,8 +45,25 @@ class Piece {
     }
   }
 
-  // Returns a boolean whether or not the next position is valid
-  validPosition() {
+  // Returns a boolean whether or not the next horizontal position is valid
+  validHorizontal(direction) {
+    let [xPos, yPos] = this.pos;
+    let currOrientation = this.orientations[this.orientation];
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let tileOccupied = this.game.tilesOccupied[xPos + xShift + direction][yPos + yShift];
+      // let notWithinBounds = (yPos + yShift + 1) >= this.game.gridHeight;
+      if (currBit && (tileOccupied)) {
+        console.log(this.game.tilesOccupied);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Returns a boolean whether or not the next vertical position is valid
+  validVertical() {
     let [xPos, yPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
@@ -79,44 +91,11 @@ class Piece {
     }
   }
 
-  moveDown() {
-    this.pos[1] += 1;
-  }
+  moveDown() { this.pos[1] += 1 }
 
-  // Direction 0: Moving horizontally
-  // Direction 1: Moving vertically
-  // Amount -1: Moving left
-  // Amount 1: Moving right
-  // move(filledTiles, direction, amount) {
-    
-  //   if (direction === 0) {
-  //     if ((amount === 1) && (this.blocks.map(block => {
-  //       return block.pos[0] === GameUtils.GRID_WIDTH - 1;
-  //     }).some(ele => ele))) {
-  //       this.fillTiles(filledTiles, undefined);
-  //       this.applyToBlocks(block => block.pos[direction] += 0);
-  //     } else if ((amount === -1) && (this.blocks.map(block => {
-  //       return block.pos[0] === 0;
-  //     }).some(ele => ele))) {
-  //       this.fillTiles(filledTiles, undefined);
-  //       this.applyToBlocks(block => block.pos[direction] += 0);
-  //     } else {
-  //       this.fillTiles(filledTiles, undefined);
-  //       this.applyToBlocks(block => block.pos[direction] += amount);
-  //     }
-  //   } else {
-      // Direction is 1
-  //     if (
-  //       (this.blocks.map(block => block.pos[1] + 1 <= GameUtils.GRID_HEIGHT - 1)).some(ele => ele) ||
-  //       (this.blocks.map(block => filledTiles[block.pos[0]][block.pos[1]] + 1)).some(ele => ele)
-  //     ) {
-  //       this.applyToBlocks(block => block.pos[direction] += amount);
-  //     } else {
-  //       this.applyToBlocks(block => block.pos[direction] += amount);
-  //       this.fillTiles(filledTiles, true);
-  //     }
-  //   }
-  // }
+  moveLeft() { this.pos[0] -= 1 }
+
+  moveRight() { this.pos[0] += 1 }
 
   rotate() {
   //   if (this.orientation === 0) {
