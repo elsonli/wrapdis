@@ -100,9 +100,9 @@ class Game {
     this.currPiece = this.generatePiece();
   }
 
-//   rotatePiece() {
-//     this.currPiece.rotate();
-//   }
+  rotatePiece() {
+    this.currPiece.rotate();
+  }
 
 //   gameOver() {
 //     if (this.filledTiles[3][0] || this.filledTiles[4][0] || this.filledTiles[5][0] || this.filledTiles[6][0]) {
