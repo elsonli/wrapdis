@@ -109,20 +109,43 @@ class Game {
     // this.clearRows();
   }
 
+  // Shifts every block at or above the lowestRowIdx down by one
+  collapseRows(lowestRowIdx) {
+    for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
+      for (let rowIdx = lowestRowIdx; rowIdx >= 0; rowIdx--) {
+        this.tilesOccupied[colIdx][rowIdx] = this.tilesOccupied[colIdx][rowIdx - 1] || false;
+      }
+    }
+  }
+
   clearRows() {
+    // Record all of the rows that should be cleared from the game board
     let rowsToClear = [];
     for (let rowIdx = this.numRows - 1; rowIdx >= 0; rowIdx--) {
-      let row = this.tilesOccupied.map((col, colIdx) => {
-        return this.tilesOccupied[colIdx][rowIdx];
-      });
-      if (row.reduce((a, b) => a + b, 0) === this.numCols) {
-        rowsToClear.push(rowIdx);
-      };
+      let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
+      if (row.reduce((a, b) => a + b, 0) === this.numCols) rowsToClear.push(rowIdx);
     }
+    rowsToClear.forEach((rowToClear, idx) => this.collapseRows(rowToClear + idx));
 
-    // this.pieces.forEach(piece => {
-    //   let []
-    // });
+    // Clear the rows specified in 'rowsToClear'
+    // rowsToClear.forEach(rowToClear => {
+
+    //   this.pieces.forEach(piece => {
+    //     let [colPos, rowPos] = piece.pos;
+    //     let currOrientation = piece.orientations[piece.orientation];
+    //     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+    //       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
+    //       let [colShift, rowShift] = piece.calculateShift(shiftAmt);
+  
+    //       // Calculate new positions - newColPos needs to account for negative modulos
+    //       let newRowPos = rowPos + rowShift;
+    //       if (currBit && newRowPos === rowToClear) {
+    //         let bitMask = (1 << shiftAmt);
+    //         piece.orientations[piece.orientation] ^= bitMask;
+    //       }
+    //     }
+    //   });
+
   }
 
 //   gameOver() {
