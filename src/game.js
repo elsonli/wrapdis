@@ -12,14 +12,14 @@ class Game {
 
     this.dimX = GameUtils.DIM_X;
     this.dimY = GameUtils.DIM_Y;
-    this.gridWidth = GameUtils.GRID_WIDTH;
-    this.gridHeight = GameUtils.GRID_HEIGHT;
+    this.numCols = GameUtils.NUM_COLS;
+    this.numRows = GameUtils.NUM_ROWS;
     this.gridColor = GameUtils.BG_COLOR;
     this.tileSize = GameUtils.TILE_SIZE;
 
     // this.shiftRowDown = this.shiftRowDown.bind(this);
-    this.tilesOccupied = new Array(this.gridWidth).fill(0).map(() => {
-      return new Array(this.gridHeight).fill(false);
+    this.tilesOccupied = new Array(this.numCols).fill(0).map(() => {
+      return new Array(this.numRows).fill(false);
     });
 
     this.currPiece = this.generatePiece();
@@ -45,15 +45,15 @@ class Game {
     
     // Construct the vertical lines for the grid
     this.ctx.strokeStyle = "#777777";
-    for (let idx = 0; idx < this.gridWidth; idx++) {
+    for (let idx = 0; idx < this.numCols; idx++) {
       this.ctx.beginPath();
       this.ctx.moveTo(this.tileSize * idx, 0);
-      this.ctx.lineTo(this.tileSize * idx, this.tileSize * this.gridHeight);
+      this.ctx.lineTo(this.tileSize * idx, this.tileSize * this.numRows);
       this.ctx.stroke();
     }
 
     // Construct the horizontal lines for the grid
-    for (let idx = 0; idx < this.gridHeight; idx++) {
+    for (let idx = 0; idx < this.numRows; idx++) {
       this.ctx.beginPath();
       this.ctx.moveTo(0, this.tileSize * idx)
       this.ctx.lineTo(this.dimX, this.tileSize * idx);
@@ -108,7 +108,7 @@ class Game {
   }
 
   clearRows() {
-    for (let rowIdx = 0; rowIdx < this.gridHeight; rowIdx++) {
+    for (let rowIdx = 0; rowIdx < this.numRows; rowIdx++) {
       let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
     }
   }

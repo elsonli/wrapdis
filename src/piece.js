@@ -2,7 +2,7 @@ class Piece {
   constructor(tetromino, game) {
     this.game = game;
     this.color = tetromino.color;
-    this.pos = [Math.floor(this.game.gridWidth / 2) - 1, -2];
+    this.pos = [Math.floor(this.game.numCols / 2) - 1, -2];
     this.orientation = tetromino.orientation;
     this.orientations = tetromino.orientations;
   }
@@ -24,8 +24,8 @@ class Piece {
       let [xShift, yShift] = this.calculateShift(shiftAmt);
 
       // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.gridWidth;
-      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newXPos = (xPos + xShift) % this.game.numCols;
+      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
       let newYPos = yPos + yShift;
 
       // Only need to color in the blocks with a 1 bit
@@ -58,8 +58,8 @@ class Piece {
       let [xShift, yShift] = this.calculateShift(shiftAmt);
 
       // Calculate new positions, newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.gridWidth;
-      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newXPos = (xPos + xShift) % this.game.numCols;
+      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
       let newYPos = yPos + yShift;
       
       let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
@@ -77,8 +77,8 @@ class Piece {
       let [xShift, yShift] = this.calculateShift(shiftAmt);
 
       // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift + direction) % this.game.gridWidth;
-      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newXPos = (xPos + xShift + direction) % this.game.numCols;
+      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
       let newYPos = yPos + yShift;
 
       let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
@@ -96,12 +96,12 @@ class Piece {
       let [xShift, yShift] = this.calculateShift(shiftAmt);
 
       // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.gridWidth;
-      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newXPos = (xPos + xShift) % this.game.numCols;
+      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
       let newYPos = yPos + yShift + 1;
 
       let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
-      let notWithinBounds = (yPos + yShift + 1) >= this.game.gridHeight;
+      let notWithinBounds = (yPos + yShift + 1) >= this.game.numRows;
       if (currBit && (tileOccupied || notWithinBounds)) return false;
     }
     return true;
@@ -115,8 +115,8 @@ class Piece {
       let [xShift, yShift] = this.calculateShift(shiftAmt);
 
       // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.gridWidth;
-      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newXPos = (xPos + xShift) % this.game.numCols;
+      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
       let newYPos = yPos + yShift;
 
       if (currBit) this.game.tilesOccupied[newXPos][newYPos] = bool;
