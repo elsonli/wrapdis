@@ -88,6 +88,7 @@ class Game {
       this.pieces.push(this.currPiece);
       this.currPiece.updatePosition(true);
       // Add row clearing logic here?
+      this.clearRows();
       this.currPiece = this.generatePiece();
     }
   }
@@ -99,18 +100,29 @@ class Game {
     this.pieces.push(this.currPiece);
     this.currPiece.updatePosition(true);
     // Add row clearing logic here?
+    this.clearRows();
     this.currPiece = this.generatePiece();
   }
 
   rotatePiece() {
     this.currPiece.rotate();
-    this.clearRows();
+    // this.clearRows();
   }
 
   clearRows() {
-    for (let rowIdx = 0; rowIdx < this.numRows; rowIdx++) {
-      let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
+    let rowsToClear = [];
+    for (let rowIdx = this.numRows - 1; rowIdx >= 0; rowIdx--) {
+      let row = this.tilesOccupied.map((col, colIdx) => {
+        return this.tilesOccupied[colIdx][rowIdx];
+      });
+      if (row.reduce((a, b) => a + b, 0) === this.numCols) {
+        rowsToClear.push(rowIdx);
+      };
     }
+
+    // this.pieces.forEach(piece => {
+    //   let []
+    // });
   }
 
 //   gameOver() {

@@ -8,32 +8,32 @@ class Piece {
   }
 
   calculateShift(shiftAmt) {
-    let xShift = Math.abs(15 - shiftAmt) % 4;
-    let yShift = Math.floor((15 - shiftAmt) / 4);
-    return [xShift, yShift];
+    let colShift = Math.abs(15 - shiftAmt) % 4;
+    let rowShift = Math.floor((15 - shiftAmt) / 4);
+    return [colShift, rowShift];
   }
 
   draw() {
-    let [xPos, yPos] = this.pos;
+    let [colPos, rowPos] = this.pos;
     
     // Iterates over the bits in currOrientation (ex: 0x0F00) from left to right
     let currOrientation = this.orientations[this.orientation];
 
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let [colShift, rowShift] = this.calculateShift(shiftAmt);
 
-      // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.numCols;
-      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
-      let newYPos = yPos + yShift;
+      // Calculate new positions - newColPos needs to account for negative modulos
+      let newColPos = (colPos + colShift) % this.game.numCols;
+      newColPos = (newColPos + this.game.numCols) % this.game.numCols;
+      let newRowPos = rowPos + rowShift;
 
       // Only need to color in the blocks with a 1 bit
       if (currBit) {
         this.game.ctx.fillStyle = this.color;
         this.game.ctx.fillRect(
-          newXPos * this.game.tileSize,
-          newYPos * this.game.tileSize,
+          newColPos * this.game.tileSize,
+          newRowPos * this.game.tileSize,
           this.game.tileSize,
           this.game.tileSize
         );
@@ -41,8 +41,8 @@ class Piece {
         // REMOVE
         // this.game.ctx.fillStyle = "#444444";
         // this.game.ctx.fillRect(
-        //   newXPos * this.game.tileSize,
-        //   newYPos * this.game.tileSize,
+        //   newColPos * this.game.tileSize,
+        //   newRowPos * this.game.tileSize,
         //   this.game.tileSize,
         //   this.game.tileSize
         // );
@@ -51,18 +51,18 @@ class Piece {
   }
 
   validOrientation(orientation) {
-    let [xPos, yPos] = this.pos;
+    let [colPos, rowPos] = this.pos;
     let nextOrientation = this.orientations[orientation];
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (nextOrientation & (1 << shiftAmt)) >> shiftAmt;
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let [colShift, rowShift] = this.calculateShift(shiftAmt);
 
-      // Calculate new positions, newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.numCols;
-      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
-      let newYPos = yPos + yShift;
+      // Calculate new positions, newColPos needs to account for negative modulos
+      let newColPos = (colPos + colShift) % this.game.numCols;
+      newColPos = (newColPos + this.game.numCols) % this.game.numCols;
+      let newRowPos = rowPos + rowShift;
       
-      let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
+      let tileOccupied = this.game.tilesOccupied[newColPos][newRowPos];
       if (currBit && tileOccupied) return false;
     }
     return true;
@@ -70,18 +70,18 @@ class Piece {
 
   // Returns a boolean whether or not the next horizontal position is valid
   validHorizontal(direction) {
-    let [xPos, yPos] = this.pos;
+    let [colPos, rowPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let [colShift, rowShift] = this.calculateShift(shiftAmt);
 
-      // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift + direction) % this.game.numCols;
-      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
-      let newYPos = yPos + yShift;
+      // Calculate new positions - newColPos needs to account for negative modulos
+      let newColPos = (colPos + colShift + direction) % this.game.numCols;
+      newColPos = (newColPos + this.game.numCols) % this.game.numCols;
+      let newRowPos = rowPos + rowShift;
 
-      let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
+      let tileOccupied = this.game.tilesOccupied[newColPos][newRowPos];
       if (currBit && tileOccupied) return false;
     }
     return true;
@@ -89,37 +89,37 @@ class Piece {
 
   // Returns a boolean whether or not the next vertical position is valid
   validVertical() {
-    let [xPos, yPos] = this.pos;
+    let [colPos, rowPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let [colShift, rowShift] = this.calculateShift(shiftAmt);
 
-      // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.numCols;
-      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
-      let newYPos = yPos + yShift + 1;
+      // Calculate new positions - newColPos needs to account for negative modulos
+      let newColPos = (colPos + colShift) % this.game.numCols;
+      newColPos = (newColPos + this.game.numCols) % this.game.numCols;
+      let newRowPos = rowPos + rowShift + 1;
 
-      let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
-      let notWithinBounds = (yPos + yShift + 1) >= this.game.numRows;
+      let tileOccupied = this.game.tilesOccupied[newColPos][newRowPos];
+      let notWithinBounds = (rowPos + rowShift + 1) >= this.game.numRows;
       if (currBit && (tileOccupied || notWithinBounds)) return false;
     }
     return true;
   }
 
   updatePosition(bool) {
-    let [xPos, yPos] = this.pos;
+    let [colPos, rowPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
-      let [xShift, yShift] = this.calculateShift(shiftAmt);
+      let [colShift, rowShift] = this.calculateShift(shiftAmt);
 
-      // Calculate new positions - newXPos needs to account for negative modulos
-      let newXPos = (xPos + xShift) % this.game.numCols;
-      newXPos = (newXPos + this.game.numCols) % this.game.numCols;
-      let newYPos = yPos + yShift;
+      // Calculate new positions - newColPos needs to account for negative modulos
+      let newColPos = (colPos + colShift) % this.game.numCols;
+      newColPos = (newColPos + this.game.numCols) % this.game.numCols;
+      let newRowPos = rowPos + rowShift;
 
-      if (currBit) this.game.tilesOccupied[newXPos][newYPos] = bool;
+      if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = bool;
     }
   }
 
