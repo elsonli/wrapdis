@@ -50,6 +50,24 @@ class Piece {
     }
   }
 
+  validOrientation(orientation) {
+    let [xPos, yPos] = this.pos;
+    let nextOrientation = this.orientations[orientation];
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (nextOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [xShift, yShift] = this.calculateShift(shiftAmt);
+
+      // Calculate new positions, newXPos needs to account for negative modulos
+      let newXPos = (xPos + xShift) % this.game.gridWidth;
+      newXPos = (newXPos + this.game.gridWidth) % this.game.gridWidth;
+      let newYPos = yPos + yShift;
+      
+      let tileOccupied = this.game.tilesOccupied[newXPos][newYPos];
+      if (currBit && tileOccupied) return false;
+    }
+    return true;
+  }
+
   // Returns a boolean whether or not the next horizontal position is valid
   validHorizontal(direction) {
     let [xPos, yPos] = this.pos;
@@ -112,7 +130,10 @@ class Piece {
   moveRight() { this.pos[0] += 1 }
 
   rotate() {
-    this.orientation = (this.orientation + 1) % 4;
+    let nextOrientation = (this.orientation + 1) % 4;
+    if (this.validOrientation(nextOrientation)) {
+      this.orientation = (this.orientation + 1) % 4;
+    }
   }
 }
 

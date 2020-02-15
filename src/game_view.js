@@ -48,8 +48,8 @@ class GameView {
 
   animate() {
     // if (!this.game.gameOver) {
-      this.game.stepDown();
-      this.game.draw(this.ctx);
+    this.game.stepDown();
+    this.game.draw(this.ctx);
     // } else {
       // this.stop();
     // }

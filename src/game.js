@@ -87,6 +87,7 @@ class Game {
     } else {
       this.pieces.push(this.currPiece);
       this.currPiece.updatePosition(true);
+      // Add row clearing logic here?
       this.currPiece = this.generatePiece();
     }
   }
@@ -97,12 +98,15 @@ class Game {
     }
     this.pieces.push(this.currPiece);
     this.currPiece.updatePosition(true);
+    // Add row clearing logic here?
     this.currPiece = this.generatePiece();
   }
 
   rotatePiece() {
     this.currPiece.rotate();
   }
+
+  
 
 //   gameOver() {
 //     if (this.filledTiles[3][0] || this.filledTiles[4][0] || this.filledTiles[5][0] || this.filledTiles[6][0]) {
