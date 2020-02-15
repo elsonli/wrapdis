@@ -104,9 +104,14 @@ class Game {
 
   rotatePiece() {
     this.currPiece.rotate();
+    this.clearRows();
   }
 
-  
+  clearRows() {
+    for (let rowIdx = 0; rowIdx < this.gridHeight; rowIdx++) {
+      let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
+    }
+  }
 
 //   gameOver() {
 //     if (this.filledTiles[3][0] || this.filledTiles[4][0] || this.filledTiles[5][0] || this.filledTiles[6][0]) {
