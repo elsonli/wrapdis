@@ -24,6 +24,11 @@ class GameView {
             this.game.rotatePiece();
             this.game.draw(this.ctx);
             break;
+
+          case "ArrowDown":
+            this.game.stepDown();
+            this.game.draw(this.ctx);
+            break;
           
           // Space (Drop Immediately)
           case "Space":
@@ -42,12 +47,12 @@ class GameView {
   }
 
   animate() {
-    if (!this.game.gameOver) {
+    // if (!this.game.gameOver) {
       this.game.stepDown();
       this.game.draw(this.ctx);
-    } else {
-      this.stop();
-    }
+    // } else {
+      // this.stop();
+    // }
   }
 
   start() {
