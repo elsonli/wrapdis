@@ -117,21 +117,35 @@ class Game {
 
 
 
-  // Finds and returns a single row to be cleared if one exists
+  // If there exists a row to clear, return that row's index, and -1 otherwise
   findRowToClear() {
-    for (let rowIdx = 0; rowIdx < this.numRows; rowIdx++) {
+    for (let rowIdx = this.numRows - 1; rowIdx >= 0; rowIdx--) {
       let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
       if (row.reduce((a, b) => a + b, 0) === this.numCols) return rowIdx;
     }
     return -1;
   }
 
-  // Shifts every block at or above the lowestRowIdx down by one
-  collapseRows(lowestRowIdx) {
+  // Update `this.tilesOccupied` by shifting every entry down by 1 if the its
+  // rowIdx is less than (higher on the grid) `rowToClear`, starting from bottom
+  updateTilesOccupied(rowToClear) {
     for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
-      for (let rowIdx = lowestRowIdx; rowIdx >= 0; rowIdx--) {
+      for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
+
+        // Accounts for the top row pulling from a negative index
         this.tilesOccupied[colIdx][rowIdx] = this.tilesOccupied[colIdx][rowIdx - 1] || false;
+
         // this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || null;
+      }
+    }
+  }
+
+  updatePieceMatrix(rowToClear) {
+    for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
+      for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
+
+        // Accounts for the top row pulling from a negative index
+        this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || null;
       }
     }
   }
@@ -140,8 +154,8 @@ class Game {
     let rowToClear = this.findRowToClear();
 
     while (rowToClear >= 0) {
-      // Shift down rows above rowToClear in 'this.tilesOccupied' for collision logic
-      this.collapseRows(rowToClear);
+      console.log(rowToClear, "rowtoclear");
+      this.updateTilesOccupied(rowToClear);
 
       // Update piece orientations for drawing logic
       // Doesn't update correctly for multiple rows (update pieces above cleared rows)
@@ -149,32 +163,39 @@ class Game {
         for (let pieceRow = this.numRows - 1; pieceRow >= 0; pieceRow--) {
           let piece = this.pieceMatrix[pieceCol][pieceRow];
           if (piece) {
-            // piece.pos[1] += 1;
-            // let containsRow = false;
-            let [colPos, rowPos] = piece.pos;
-            let currOrientation = piece.orientations[piece.orientation];
-            let currOrientationStr = currOrientation.toString(2).padStart(16, "0");
-            for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
-              // let currBit = currOrientationStr[15 - shiftAmt];
-              let [colShift, rowShift] = piece.calculateShift(shiftAmt);
-              let newRowPos = rowPos + rowShift;
-              if (newRowPos === rowToClear) {
-                // console.log(shiftAmt);
-                // console.log(currOrientationStr, "before");
-                currOrientationStr = (currOrientationStr.slice(0, 15 - shiftAmt) + currOrientationStr.slice(15 - shiftAmt + 1)).padStart(16, "0");
-                // console.log(currOrientationStr, "after");
-                // containsRow = true;
+            if (piece.color === "#00FFFF" && piece.pos[1] + 4 < rowToClear) {
+              piece.pos[1] += 1;
+            } else if (piece.pos[1] + 3 < rowToClear) {
+              piece.pos[1] += 1;
+            } else {
+              // let containsRow = false;
+              let [colPos, rowPos] = piece.pos;
+              let currOrientation = piece.orientations[piece.orientation];
+              let currOrientationStr = currOrientation.toString(2).padStart(16, "0");
+              for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+                // let currBit = currOrientationStr[15 - shiftAmt];
+                let [colShift, rowShift] = piece.calculateShift(shiftAmt);
+                let newRowPos = rowPos + rowShift;
+                if (newRowPos === rowToClear) {
+                  // console.log(shiftAmt);
+                  // console.log(currOrientationStr, "before");
+                  currOrientationStr = (currOrientationStr.slice(0, 15 - shiftAmt) + currOrientationStr.slice(15 - shiftAmt + 1)).padStart(16, "0");
+                  // console.log(currOrientationStr, "after");
+                  // containsRow = true;
+                }
+              }
+              // if (!containsRow || piece.pos[1] < rowToClear) piece.pos[1] += 1;
+              let binaryOrientation = parseInt(currOrientationStr, 2);
+              piece.orientations[piece.orientation] = binaryOrientation;
+              if (!binaryOrientation) {
+                this.pieceMatrix[pieceCol][pieceRow] = null;
               }
             }
-            // if (!containsRow || piece.pos[1] < rowToClear) piece.pos[1] += 1;
-            piece.orientations[piece.orientation] = parseInt(currOrientationStr, 2);
           }
         }
       }
 
-      // console.log(this.tilesOccupied, "tilesoccupied");
-      // console.log(this.pieceMatrix, "piecematrix");
-
+      this.updatePieceMatrix(rowToClear);
       rowToClear = this.findRowToClear();
     }
   }

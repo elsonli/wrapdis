@@ -7,12 +7,14 @@ class Piece {
     this.orientations = tetromino.orientations;
   }
 
+  // Calculates [colShift, rowShift] based on shiftAmt of an orientation
   calculateShift(shiftAmt) {
     let colShift = Math.abs(15 - shiftAmt) % 4;
     let rowShift = Math.floor((15 - shiftAmt) / 4);
     return [colShift, rowShift];
   }
 
+  // Draws a piece onto the game board
   draw() {
     let [colPos, rowPos] = this.pos;
     
@@ -50,6 +52,7 @@ class Piece {
     }
   }
 
+  // Returns a boolean whether or not the GIVEN orientation is valid
   validOrientation(orientation) {
     let [colPos, rowPos] = this.pos;
     let nextOrientation = this.orientations[orientation];
@@ -68,7 +71,7 @@ class Piece {
     return true;
   }
 
-  // Returns a boolean whether or not the next horizontal position is valid
+  // Returns a boolean whether or not the NEXT horizontal position is valid
   validHorizontal(direction) {
     let [colPos, rowPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
@@ -87,7 +90,7 @@ class Piece {
     return true;
   }
 
-  // Returns a boolean whether or not the next vertical position is valid
+  // Returns a boolean whether or not the NEXT vertical position is valid
   validVertical() {
     let [colPos, rowPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
@@ -123,20 +126,28 @@ class Piece {
       newColPos = (newColPos + this.game.numCols) % this.game.numCols;
       let newRowPos = rowPos + rowShift;
 
-      if (currBit) {
-        if (!updatedPos && bool) this.game.pieceMatrix[newColPos][newRowPos] = this;
+      if (!updatedPos && bool) {
+        this.game.pieceMatrix[newColPos][newRowPos] = this;
         updatedPos = true;
-        this.game.tilesOccupied[newColPos][newRowPos] = bool
       }
+
+      if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = bool;
     }
-    console.log(this.game.pieceMatrix, "piecematrix")
+    console.log(this.game.tilesOccupied, "tilesoccupied");
+    console.log(this.game.pieceMatrix, "piecematrix");
   }
 
   moveDown() { this.pos[1] += 1 }
 
-  moveLeft() { this.pos[0] -= 1 }
+  moveLeft() {
+    this.pos[0] = (this.pos[0] - 1) % this.game.numCols;
+    this.pos[0] = (this.pos[0] + this.game.numCols) % this.game.numCols;
+  }
 
-  moveRight() { this.pos[0] += 1 }
+  moveRight() {
+    this.pos[0] = (this.pos[0] + 1) % this.game.numCols;
+    this.pos[0] = (this.pos[0] + this.game.numCols) % this.game.numCols;
+  }
 
   rotate() {
     let nextOrientation = (this.orientation + 1) % 4;
