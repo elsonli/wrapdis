@@ -17,7 +17,6 @@ class Game {
     this.gridColor = GameUtils.BG_COLOR;
     this.tileSize = GameUtils.TILE_SIZE;
 
-    // this.shiftRowDown = this.shiftRowDown.bind(this);
     this.tilesOccupied = new Array(this.numCols).fill(0).map(() => {
       return new Array(this.numRows).fill(false);
     });
@@ -96,7 +95,6 @@ class Game {
       // this.currPiece.color = "#FFFFFF"; // Change color on drop
       this.pieces.push(this.currPiece);
       this.currPiece.recordPiece();
-      // Add row clearing logic here?
       this.clearRows();
       this.currPiece = this.generatePiece();
     }
@@ -110,7 +108,6 @@ class Game {
     // this.currPiece.color = "#FFFFFF"; // Change color on drop
     this.pieces.push(this.currPiece);
     this.currPiece.recordPiece();
-    // Add row clearing logic here?
     this.clearRows();
     this.currPiece = this.generatePiece();
   }
