@@ -129,7 +129,7 @@ class Piece {
       if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = true;
     }
 
-    this.game.pieceMatrix[newColPos][newRowPos] = this;
+    this.game.pieceMatrix[colPos][rowPos] = this;
 
     console.log(this.game.tilesOccupied, "tilesoccupied");
     console.log(this.game.pieceMatrix, "piecematrix");

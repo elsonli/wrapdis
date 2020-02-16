@@ -157,6 +157,7 @@ class Game {
 
   clearRows() {
     let rowToClear = this.findRowToClear();
+    console.log(rowToClear);
 
     while (rowToClear >= 0) {
       this.updateTilesOccupied(rowToClear);
