@@ -22,6 +22,10 @@ class Game {
       return new Array(this.numRows).fill(false);
     });
 
+    this.pieceMatrix = new Array(this.numCols).fill(0).map(() => {
+      return new Array(this.numRows).fill(null);
+    });
+
     this.currPiece = this.generatePiece();
   }
   
@@ -85,6 +89,7 @@ class Game {
     if (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
     } else {
+    // this.currPiece.color = "#FFFFFF"; // Change color on drop
       this.pieces.push(this.currPiece);
       this.currPiece.updatePosition(true);
       // Add row clearing logic here?
@@ -97,6 +102,7 @@ class Game {
     while (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
     }
+    // this.currPiece.color = "#FFFFFF"; // Change color on drop
     this.pieces.push(this.currPiece);
     this.currPiece.updatePosition(true);
     // Add row clearing logic here?
@@ -109,43 +115,68 @@ class Game {
     // this.clearRows();
   }
 
+
+
+  // Finds and returns a single row to be cleared if one exists
+  findRowToClear() {
+    for (let rowIdx = 0; rowIdx < this.numRows; rowIdx++) {
+      let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
+      if (row.reduce((a, b) => a + b, 0) === this.numCols) return rowIdx;
+    }
+    return -1;
+  }
+
   // Shifts every block at or above the lowestRowIdx down by one
   collapseRows(lowestRowIdx) {
     for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
       for (let rowIdx = lowestRowIdx; rowIdx >= 0; rowIdx--) {
         this.tilesOccupied[colIdx][rowIdx] = this.tilesOccupied[colIdx][rowIdx - 1] || false;
+        // this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || null;
       }
     }
   }
 
   clearRows() {
-    // Record all of the rows that should be cleared from the game board
-    let rowsToClear = [];
-    for (let rowIdx = this.numRows - 1; rowIdx >= 0; rowIdx--) {
-      let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
-      if (row.reduce((a, b) => a + b, 0) === this.numCols) rowsToClear.push(rowIdx);
+    let rowToClear = this.findRowToClear();
+
+    while (rowToClear >= 0) {
+      // Shift down rows above rowToClear in 'this.tilesOccupied' for collision logic
+      this.collapseRows(rowToClear);
+
+      // Update piece orientations for drawing logic
+      // Doesn't update correctly for multiple rows (update pieces above cleared rows)
+      for (let pieceCol = 0; pieceCol < this.numCols; pieceCol++) {
+        for (let pieceRow = this.numRows - 1; pieceRow >= 0; pieceRow--) {
+          let piece = this.pieceMatrix[pieceCol][pieceRow];
+          if (piece) {
+            // piece.pos[1] += 1;
+            // let containsRow = false;
+            let [colPos, rowPos] = piece.pos;
+            let currOrientation = piece.orientations[piece.orientation];
+            let currOrientationStr = currOrientation.toString(2).padStart(16, "0");
+            for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+              // let currBit = currOrientationStr[15 - shiftAmt];
+              let [colShift, rowShift] = piece.calculateShift(shiftAmt);
+              let newRowPos = rowPos + rowShift;
+              if (newRowPos === rowToClear) {
+                // console.log(shiftAmt);
+                // console.log(currOrientationStr, "before");
+                currOrientationStr = (currOrientationStr.slice(0, 15 - shiftAmt) + currOrientationStr.slice(15 - shiftAmt + 1)).padStart(16, "0");
+                // console.log(currOrientationStr, "after");
+                // containsRow = true;
+              }
+            }
+            // if (!containsRow || piece.pos[1] < rowToClear) piece.pos[1] += 1;
+            piece.orientations[piece.orientation] = parseInt(currOrientationStr, 2);
+          }
+        }
+      }
+
+      // console.log(this.tilesOccupied, "tilesoccupied");
+      // console.log(this.pieceMatrix, "piecematrix");
+
+      rowToClear = this.findRowToClear();
     }
-    rowsToClear.forEach((rowToClear, idx) => this.collapseRows(rowToClear + idx));
-
-    // Clear the rows specified in 'rowsToClear'
-    // rowsToClear.forEach(rowToClear => {
-
-    //   this.pieces.forEach(piece => {
-    //     let [colPos, rowPos] = piece.pos;
-    //     let currOrientation = piece.orientations[piece.orientation];
-    //     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
-    //       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
-    //       let [colShift, rowShift] = piece.calculateShift(shiftAmt);
-  
-    //       // Calculate new positions - newColPos needs to account for negative modulos
-    //       let newRowPos = rowPos + rowShift;
-    //       if (currBit && newRowPos === rowToClear) {
-    //         let bitMask = (1 << shiftAmt);
-    //         piece.orientations[piece.orientation] ^= bitMask;
-    //       }
-    //     }
-    //   });
-
   }
 
 //   gameOver() {

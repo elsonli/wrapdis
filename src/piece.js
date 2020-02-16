@@ -109,7 +109,11 @@ class Piece {
 
   updatePosition(bool) {
     let [colPos, rowPos] = this.pos;
+    let updatedPos = false;
     let currOrientation = this.orientations[this.orientation];
+
+    if (!bool) this.game.pieceMatrix[colPos][rowPos] = null;
+
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
       let [colShift, rowShift] = this.calculateShift(shiftAmt);
@@ -119,8 +123,13 @@ class Piece {
       newColPos = (newColPos + this.game.numCols) % this.game.numCols;
       let newRowPos = rowPos + rowShift;
 
-      if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = bool;
+      if (currBit) {
+        if (!updatedPos && bool) this.game.pieceMatrix[newColPos][newRowPos] = this;
+        updatedPos = true;
+        this.game.tilesOccupied[newColPos][newRowPos] = bool
+      }
     }
+    console.log(this.game.pieceMatrix, "piecematrix")
   }
 
   moveDown() { this.pos[1] += 1 }
