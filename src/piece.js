@@ -110,12 +110,12 @@ class Piece {
     return true;
   }
 
-  updatePosition(bool) {
+  // Updates `this.game.tilesOccupied` and `this.game.pieceMatrix` after drop
+  recordPiece() {
     let [colPos, rowPos] = this.pos;
-    let updatedPos = false;
     let currOrientation = this.orientations[this.orientation];
 
-    if (!bool) this.game.pieceMatrix[colPos][rowPos] = null;
+    // if (!bool) this.game.pieceMatrix[colPos][rowPos] = null;
 
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
@@ -126,18 +126,18 @@ class Piece {
       newColPos = (newColPos + this.game.numCols) % this.game.numCols;
       let newRowPos = rowPos + rowShift;
 
-      if (!updatedPos && bool) {
-        this.game.pieceMatrix[newColPos][newRowPos] = this;
-        updatedPos = true;
-      }
-
-      if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = bool;
+      if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = true;
     }
+
+    this.game.pieceMatrix[newColPos][newRowPos] = this;
+
     console.log(this.game.tilesOccupied, "tilesoccupied");
     console.log(this.game.pieceMatrix, "piecematrix");
   }
 
-  moveDown() { this.pos[1] += 1 }
+  moveDown() {
+    this.pos[1] += 1
+  }
 
   moveLeft() {
     this.pos[0] = (this.pos[0] - 1) % this.game.numCols;
@@ -150,10 +150,7 @@ class Piece {
   }
 
   rotate() {
-    let nextOrientation = (this.orientation + 1) % 4;
-    if (this.validOrientation(nextOrientation)) {
-      this.orientation = (this.orientation + 1) % 4;
-    }
+    this.orientation = (this.orientation + 1) % 4;
   }
 }
 

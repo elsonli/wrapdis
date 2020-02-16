@@ -41,6 +41,7 @@ class Game {
     return new Piece(randTetromino, this);
   }
 
+  // Draws the game board, locked pieces, and current piece
   draw() {
     // Background for the grid
     this.ctx.clearRect(0, 0, this.dimX, this.dimY);
@@ -73,25 +74,28 @@ class Game {
     this.currPiece.draw(this.ctx);
   }
 
+  // Move the current piece to the right 1 block
   stepRight() {
     if (this.currPiece.validHorizontal(1)) {
       this.currPiece.moveRight();
     }
   }
 
+  // Move the current piece to the left 1 block
   stepLeft() {
     if (this.currPiece.validHorizontal(-1)) {
       this.currPiece.moveLeft();
     }
   }
 
+  // Move the current piece down 1 block
   stepDown() {
     if (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
     } else {
-    // this.currPiece.color = "#FFFFFF"; // Change color on drop
+      // this.currPiece.color = "#FFFFFF"; // Change color on drop
       this.pieces.push(this.currPiece);
-      this.currPiece.updatePosition(true);
+      this.currPiece.recordPiece();
       // Add row clearing logic here?
       this.clearRows();
       this.currPiece = this.generatePiece();
@@ -104,15 +108,18 @@ class Game {
     }
     // this.currPiece.color = "#FFFFFF"; // Change color on drop
     this.pieces.push(this.currPiece);
-    this.currPiece.updatePosition(true);
+    this.currPiece.recordPiece();
     // Add row clearing logic here?
     this.clearRows();
     this.currPiece = this.generatePiece();
   }
 
+
   rotatePiece() {
-    this.currPiece.rotate();
-    // this.clearRows();
+    let nextOrientation = (this.currPiece.orientation + 1) % 4;
+    if (this.currPiece.validOrientation(nextOrientation)) {
+      this.currPiece.rotate();
+    }
   }
 
 
