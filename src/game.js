@@ -102,6 +102,7 @@ class Game {
     }
   }
 
+  // Continuously move the current piece down until collision
   dropPiece() {
     while (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
@@ -114,15 +115,13 @@ class Game {
     this.currPiece = this.generatePiece();
   }
 
-
+  // Rotates the current piece
   rotatePiece() {
     let nextOrientation = (this.currPiece.orientation + 1) % 4;
     if (this.currPiece.validOrientation(nextOrientation)) {
       this.currPiece.rotate();
     }
   }
-
-
 
   // If there exists a row to clear, return that row's index, and -1 otherwise
   findRowToClear() {
@@ -133,8 +132,8 @@ class Game {
     return -1;
   }
 
-  // Update `this.tilesOccupied` by shifting every entry down by 1 if the its
-  // rowIdx is less than (higher on the grid) `rowToClear`, starting from bottom
+  // Update `this.tilesOccupied` by shifting every entry down by 1 if its rowIdx
+  // is less than (higher on the grid) `rowToClear`, starting from rowToClear
   updateTilesOccupied(rowToClear) {
     for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
       for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
@@ -147,6 +146,8 @@ class Game {
     }
   }
 
+  // Update `this.pieceMatrix` by shifting every entry down by 1 if its rowIdx
+  // is less than (higher on the grid) `rowToClear`, starting from rowToClear
   updatePieceMatrix(rowToClear) {
     for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
       for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
@@ -161,7 +162,6 @@ class Game {
     let rowToClear = this.findRowToClear();
 
     while (rowToClear >= 0) {
-      console.log(rowToClear, "rowtoclear");
       this.updateTilesOccupied(rowToClear);
 
       // Update piece orientations for drawing logic
