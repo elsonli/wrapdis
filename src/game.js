@@ -22,7 +22,9 @@ class Game {
     });
 
     this.pieceMatrix = new Array(this.numCols).fill(0).map(() => {
-      return new Array(this.numRows).fill(null);
+      return new Array(this.numRows).fill(0).map(() => {
+        return new Array();
+      });
     });
 
     this.currPiece = this.generatePiece();
@@ -35,7 +37,7 @@ class Game {
     const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randTetrominoKey]));
 
     // Used for specific piece testing
-    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoL"]));
+    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
 
     return new Piece(randTetromino, this);
   }
@@ -91,25 +93,23 @@ class Game {
   stepDown() {
     if (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
+      return true;
     } else {
       // this.currPiece.color = "#FFFFFF"; // Change color on drop
       this.pieces.push(this.currPiece);
       this.currPiece.recordPiece();
       this.clearRows();
       this.currPiece = this.generatePiece();
+      return false;
     }
   }
 
   // Continuously move the current piece down until collision
   dropPiece() {
-    while (this.currPiece.validVertical()) {
-      this.currPiece.moveDown();
+    let validStep = this.stepDown();
+    while (validStep) {
+      validStep = this.stepDown();
     }
-    // this.currPiece.color = "#FFFFFF"; // Change color on drop
-    this.pieces.push(this.currPiece);
-    this.currPiece.recordPiece();
-    this.clearRows();
-    this.currPiece = this.generatePiece();
   }
 
   // Rotates the current piece
@@ -134,11 +134,8 @@ class Game {
   updateTilesOccupied(rowToClear) {
     for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
       for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
-
         // Accounts for the top row pulling from a negative index
         this.tilesOccupied[colIdx][rowIdx] = this.tilesOccupied[colIdx][rowIdx - 1] || false;
-
-        // this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || null;
       }
     }
   }
@@ -150,14 +147,13 @@ class Game {
       for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
 
         // Accounts for the top row pulling from a negative index
-        this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || null;
+        this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || new Array();
       }
     }
   }
 
   clearRows() {
     let rowToClear = this.findRowToClear();
-
     while (rowToClear >= 0) {
       this.updateTilesOccupied(rowToClear);
 
@@ -165,36 +161,41 @@ class Game {
       // Doesn't update correctly for multiple rows (update pieces above cleared rows)
       for (let pieceCol = 0; pieceCol < this.numCols; pieceCol++) {
         for (let pieceRow = this.numRows - 1; pieceRow >= 0; pieceRow--) {
-          let piece = this.pieceMatrix[pieceCol][pieceRow];
-          if (piece) {
-            if (piece.color === "#00FFFF" && piece.pos[1] + 4 < rowToClear) {
-              piece.pos[1] += 1;
-            } else if (piece.pos[1] + 3 < rowToClear) {
-              piece.pos[1] += 1;
-            } else {
-              // let containsRow = false;
-              let [colPos, rowPos] = piece.pos;
-              let currOrientation = piece.orientations[piece.orientation];
-              let currOrientationStr = currOrientation.toString(2).padStart(16, "0");
-              for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
-                // let currBit = currOrientationStr[15 - shiftAmt];
-                let [colShift, rowShift] = piece.calculateShift(shiftAmt);
-                let newRowPos = rowPos + rowShift;
-                if (newRowPos === rowToClear) {
-                  // console.log(shiftAmt);
-                  // console.log(currOrientationStr, "before");
-                  currOrientationStr = (currOrientationStr.slice(0, 15 - shiftAmt) + currOrientationStr.slice(15 - shiftAmt + 1)).padStart(16, "0");
-                  // console.log(currOrientationStr, "after");
-                  // containsRow = true;
+          let pieces = this.pieceMatrix[pieceCol][pieceRow];
+          if (pieces.length) {
+            for (let pieceIdx = 0; pieceIdx < pieces.length; pieceIdx++) {
+              let piece = pieces[pieceIdx];
+             
+              
+              if (piece.color === "#00FFFF" && piece.pos[1] + 4 < rowToClear) {
+                piece.pos[1] += 1;
+              } else if (piece.pos[1] + 3 < rowToClear) {
+                piece.pos[1] += 1;
+              } else {
+                let [colPos, rowPos] = piece.pos;
+                let currOrientation = piece.orientations[piece.orientation];
+                let currOrientationStr = currOrientation.toString(2).padStart(16, "0");
+                for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+                  let [colShift, rowShift] = piece.calculateShift(shiftAmt);
+                  let newRowPos = rowPos + rowShift;
+                  if (newRowPos === rowToClear) {
+                    // console.log(shiftAmt);
+                    // console.log(currOrientationStr, "before");
+                    currOrientationStr = (currOrientationStr.slice(0, 15 - shiftAmt) + currOrientationStr.slice(15 - shiftAmt + 1)).padStart(16, "0");
+                    // console.log(currOrientationStr, "after");
+                    // containsRow = true;
+                  }
                 }
+                let binaryOrientation = parseInt(currOrientationStr, 2);
+                piece.orientations[piece.orientation] = binaryOrientation;
+                // if (!binaryOrientation) {
+                //   this.pieceMatrix[pieceCol][pieceRow][pieceIdx] = null;
+                // }
               }
-              // if (!containsRow || piece.pos[1] < rowToClear) piece.pos[1] += 1;
-              let binaryOrientation = parseInt(currOrientationStr, 2);
-              piece.orientations[piece.orientation] = binaryOrientation;
-              if (!binaryOrientation) {
-                this.pieceMatrix[pieceCol][pieceRow] = null;
-              }
+
             }
+
+
           }
         }
       }
