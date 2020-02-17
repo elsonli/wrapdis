@@ -154,23 +154,30 @@ class Game {
 
   clearRows() {
     let rowToClear = this.findRowToClear();
+
     while (rowToClear >= 0) {
       this.updateTilesOccupied(rowToClear);
 
       // Update piece orientations for drawing logic
       // Doesn't update correctly for multiple rows (update pieces above cleared rows)
-      for (let pieceCol = 0; pieceCol < this.numCols; pieceCol++) {
-        for (let pieceRow = this.numRows - 1; pieceRow >= 0; pieceRow--) {
-          let pieces = this.pieceMatrix[pieceCol][pieceRow];
-          if (pieces.length) {
-            for (let pieceIdx = 0; pieceIdx < pieces.length; pieceIdx++) {
-              let piece = pieces[pieceIdx];
+      for (let pieceMatrixCol = 0; pieceMatrixCol < this.numCols; pieceMatrixCol++) {
+        for (let pieceMatrixRow = rowToClear; pieceMatrixRow >= 0; pieceMatrixRow--) {
+          let piecesArr = this.pieceMatrix[pieceMatrixCol][pieceMatrixRow];
+          if (piecesArr.length) {
+            for (let pieceIdx = 0; pieceIdx < piecesArr.length; pieceIdx++) {
+              let piece = piecesArr[pieceIdx];
              
-              
+              // Handles if cyan piece is guaranteed to be above `rowToClear`
               if (piece.color === "#00FFFF" && piece.pos[1] + 4 < rowToClear) {
                 piece.pos[1] += 1;
+
+              // Handles any other piece guaranteed to be above `rowToClear`
               } else if (piece.pos[1] + 3 < rowToClear) {
                 piece.pos[1] += 1;
+
+              // The `rowToClear` is within the bounds of the considered piece
+              // Delete that portion of the piece's orientation and update the
+              // piece's orientation array to reflect the change
               } else {
                 let [colPos, rowPos] = piece.pos;
                 let currOrientation = piece.orientations[piece.orientation];
@@ -179,23 +186,13 @@ class Game {
                   let [colShift, rowShift] = piece.calculateShift(shiftAmt);
                   let newRowPos = rowPos + rowShift;
                   if (newRowPos === rowToClear) {
-                    // console.log(shiftAmt);
-                    // console.log(currOrientationStr, "before");
                     currOrientationStr = (currOrientationStr.slice(0, 15 - shiftAmt) + currOrientationStr.slice(15 - shiftAmt + 1)).padStart(16, "0");
-                    // console.log(currOrientationStr, "after");
-                    // containsRow = true;
                   }
                 }
                 let binaryOrientation = parseInt(currOrientationStr, 2);
                 piece.orientations[piece.orientation] = binaryOrientation;
-                // if (!binaryOrientation) {
-                //   this.pieceMatrix[pieceCol][pieceRow][pieceIdx] = null;
-                // }
               }
-
             }
-
-
           }
         }
       }

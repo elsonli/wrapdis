@@ -5,8 +5,6 @@ class Piece {
     this.pos = [Math.floor(this.game.numCols / 2) - 1, -2];
     this.orientation = tetromino.orientation;
     this.orientations = tetromino.orientations;
-
-    this.recordPiece = this.recordPiece.bind(this);
   }
 
   // Calculates [colShift, rowShift] based on shiftAmt of an orientation
@@ -131,7 +129,7 @@ class Piece {
       if (currBit) this.game.tilesOccupied[newColPos][newRowPos] = true;
     }
 
-    this.game.pieceMatrix[colPos][rowPos].push(this);
+    if (rowPos >= 0) this.game.pieceMatrix[colPos][rowPos].push(this);
   }
 
   moveDown() {
