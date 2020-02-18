@@ -143,6 +143,9 @@ class Game {
   // Update `this.pieceMatrix` by shifting every entry down by 1 if its rowIdx
   // is less than (higher on the grid) `rowToClear`, starting from rowToClear
   updatePieceMatrix(rowToClear) {
+
+    // ##### Maybe need to account for moving pieces individually instead of the whole array #####
+
     for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
       for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
 
