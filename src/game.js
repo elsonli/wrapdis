@@ -95,7 +95,7 @@ class Game {
       this.currPiece.moveDown();
       return true;
     } else {
-      // this.currPiece.color = "#FFFFFF"; // Change color on drop
+      // this.currPiece.color = "#444444"; // Change color on drop
       this.pieces.push(this.currPiece);
       this.currPiece.recordPiece();
       this.clearRows();
@@ -162,21 +162,23 @@ class Game {
       this.updateTilesOccupied(rowToClear);
 
       // Update piece orientations for drawing logic
-      // Doesn't update correctly for multiple rows (update pieces above cleared rows)
       for (let pieceMatrixCol = 0; pieceMatrixCol < this.numCols; pieceMatrixCol++) {
         for (let pieceMatrixRow = rowToClear; pieceMatrixRow >= 0; pieceMatrixRow--) {
           let piecesArr = this.pieceMatrix[pieceMatrixCol][pieceMatrixRow];
           if (piecesArr.length) {
-            for (let pieceIdx = 0; pieceIdx < piecesArr.length; pieceIdx++) {
+            let trackIdxs = [];
+            for (let pieceIdx = piecesArr.length - 1; pieceIdx >= 0; pieceIdx--) {
               let piece = piecesArr[pieceIdx];
              
               // Handles if cyan piece is guaranteed to be above `rowToClear`
               if (piece.color === "#00FFFF" && piece.pos[1] + 4 < rowToClear) {
                 piece.pos[1] += 1;
+                trackIdxs.push(pieceIdx);
 
               // Handles any other piece guaranteed to be above `rowToClear`
               } else if (piece.pos[1] + 3 < rowToClear) {
                 piece.pos[1] += 1;
+                trackIdxs.push(pieceIdx);
 
               // The `rowToClear` is within the bounds of the considered piece
               // Delete that portion of the piece's orientation and update the
@@ -196,11 +198,27 @@ class Game {
                 piece.orientations[piece.orientation] = binaryOrientation;
               }
             }
+
+            // debugger
+
+            // `trackIdxs` will be an array of piece indices within `piecesArr`
+            // in decreasing order that needs to be shifted down by 1
+            for (let idx = 0; idx < trackIdxs.length; idx++) {
+              let trackIdx = trackIdxs[idx];
+              let trackPiece = piecesArr[trackIdx];
+              this.pieceMatrix[pieceMatrixCol][pieceMatrixRow + 1].push(trackPiece);
+            }
+
+            // Remove the tracked pieces from the current `piecesArr`
+            for (let idx = 0; idx < trackIdxs.length; idx++) {
+              let trackIdx = trackIdxs[idx];
+              piecesArr.splice(trackIdx, 1);
+            }
           }
         }
       }
 
-      this.updatePieceMatrix(rowToClear);
+      // this.updatePieceMatrix(rowToClear);
       rowToClear = this.findRowToClear();
     }
   }
