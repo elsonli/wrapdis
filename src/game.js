@@ -140,21 +140,6 @@ class Game {
     }
   }
 
-  // Update `this.pieceMatrix` by shifting every entry down by 1 if its rowIdx
-  // is less than (higher on the grid) `rowToClear`, starting from rowToClear
-  updatePieceMatrix(rowToClear) {
-
-    // ##### Maybe need to account for moving pieces individually instead of the whole array #####
-
-    for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
-      for (let rowIdx = rowToClear; rowIdx >= 0; rowIdx--) {
-
-        // Accounts for the top row pulling from a negative index
-        this.pieceMatrix[colIdx][rowIdx] = this.pieceMatrix[colIdx][rowIdx - 1] || new Array();
-      }
-    }
-  }
-
   clearRows() {
     let rowToClear = this.findRowToClear();
 
@@ -199,8 +184,6 @@ class Game {
               }
             }
 
-            // debugger
-
             // `trackIdxs` will be an array of piece indices within `piecesArr`
             // in decreasing order that needs to be shifted down by 1
             for (let idx = 0; idx < trackIdxs.length; idx++) {
@@ -218,7 +201,6 @@ class Game {
         }
       }
 
-      // this.updatePieceMatrix(rowToClear);
       rowToClear = this.findRowToClear();
     }
   }
