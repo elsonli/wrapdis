@@ -10,11 +10,24 @@
 <body>
   <canvas class="game-canvas"></canvas>
   <section class="game-section">
-    <div class="game-section-div">
-      <canvas class="game-next-piece" width="160" height="160"></canvas>
-      <canvas class="game-score" width="160" height="160"></canvas>
+
+    <div class="game-section-piece-score">
+      <div>
+        <h1>Next Piece</h1>
+        <canvas class="game-next-piece" width="160" height="160"></canvas>
+      </div>
+      <div>
+        <h1>Saved Piece</h1>
+        <canvas class="game-hold-piece" width="160" height="160"></canvas>
+      </div>
+      <div>
+        <h1>Score</h1>
+        <canvas class="game-score" width="160" height="160"></canvas>
+      </div>
     </div>
-    <img src="testpng.png" alt="Key Bindings">
+    <div class="game-section-div">
+    </div>
+    <img src="test2png.png" alt="Key Bindings">
   </section>
   <script src="./main.js"></script>
 </body>

@@ -2,6 +2,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: #000000;
+  padding-top: 20%;
 }
 
 .game-canvas {
@@ -19,7 +20,21 @@ body {
   justify-content: space-evenly;
 }
 
+.game-section-piece-score {
+  display: flex;
+  text-align: center;
+}
+
+.game-section-piece-score h1 {
+  color: blue;
+}
+
 .game-next-piece {
+  border: 5px double #444444;
+  background-color: #333333;
+}
+
+.game-hold-piece {
   border: 5px double #444444;
   background-color: #333333;
 }
@@ -30,6 +45,6 @@ body {
 }
 
 .game-section > img {
-  max-width: 800px;
-  max-height: 600px;
+  max-width: 600px;
+  max-height: 400px;
 }

@@ -9,7 +9,7 @@ class GameView {
           
           // Left Arrow (Move Piece Left)
           case "ArrowLeft":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.game.stepLeft();
               this.game.draw(this.ctx);
             }
@@ -17,7 +17,7 @@ class GameView {
 
           // Right Arrow (Move Piece Right)
           case "ArrowRight":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.game.stepRight();
               this.game.draw(this.ctx);
             }
@@ -25,14 +25,14 @@ class GameView {
           
           // Up Arrow (Rotate Piece Clockwise)
           case "ArrowUp":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.game.rotatePiece();
               this.game.draw(this.ctx);
             }
             break;
 
           case "ArrowDown":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.game.stepDown();
               this.game.draw(this.ctx);
             }
@@ -40,7 +40,7 @@ class GameView {
           
           // Space (Drop Immediately)
           case "Space":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.game.dropPiece();
               this.game.draw(this.ctx);
             }
@@ -48,22 +48,39 @@ class GameView {
 
           // N Key (New Game)
           case "KeyN":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.game = new Game(this.ctx, this.controller);
+            }
+            break;
+
+          // C Key (Hold Piece)
+          case "KeyC":
+            if (!this.paused && !this.game.gameOver()) {
+              let currPiece = this.game.currPiece;
+              let holdPiece = this.game.holdPiece;
+              if (holdPiece) {
+                if (holdPiece.validOrientation(holdPiece.orientation)) {
+                  this.game.currPiece = holdPiece;
+                  this.game.holdPiece = currPiece;
+                }
+              } else {
+                this.game.holdPiece = this.game.currPiece;
+                this.game.currPiece = this.game.generatePiece();
+              }
             }
             break;
 
           // Enter Key (Pause Game)
           case "Enter":
-            if (!this.paused) {
+            if (!this.paused && !this.game.gameOver()) {
               this.paused = true;
               clearInterval(this.interval);
               cancelAnimationFrame(this.animation);
-              document.getElementById("game-canvas").addEventListener("keydown", this.controller.keyListener.bind(this));
+              window.addEventListener("keydown", this.controller.keyListener.bind(this));
             } else {
               this.paused = false;
               this.animation = requestAnimationFrame(this.animate);
-              document.getElementById("game-canvas").removeEventListener("keydown", this.controller.keyListener.bind(this));
+              window.removeEventListener("keydown", this.controller.keyListener.bind(this));
             }
             break;
         }
