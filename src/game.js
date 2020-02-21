@@ -53,15 +53,12 @@ class Game {
     });
   }
 
-  // Returns a new and random Piece by sampling from `this.generatedPieces`
+  // Returns a random Piece by sampling from `this.generatedPieces`
   generatePiece() {
     if (!this.generatedPieces.length) {
       this.generatedPieces = this.generatePieces();
     }
     let randTetromino = this.generatedPieces.pop();
-    // const allTetrominoKeys = Object.keys(allTetrominos);
-    // const randTetrominoKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
-    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randTetrominoKey]));
 
     // Used for specific piece testing
     // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
@@ -69,14 +66,14 @@ class Game {
     return new Piece(randTetromino, this);
   }
 
-  // Draws the game board, locked pieces, and current piece
+  // Draws the game board, locked Pieces, and current Piece
   draw() {
-    // Background for the grid
+    // Draws the background for the grid
     this.ctx.clearRect(0, 0, this.dimX, this.dimY);
     this.ctx.fillStyle = this.gridColor;
     this.ctx.fillRect(0, 0, this.dimX, this.dimY);
     
-    // Construct the vertical lines for the grid
+    // Constructs and draws the vertical lines for the grid
     this.ctx.strokeStyle = "#777777";
     for (let idx = 0; idx < this.numCols; idx++) {
       this.ctx.beginPath();
@@ -85,7 +82,7 @@ class Game {
       this.ctx.stroke();
     }
 
-    // Construct the horizontal lines for the grid
+    // Constructs and draws the horizontal lines for the grid
     for (let idx = 0; idx < this.numRows; idx++) {
       this.ctx.beginPath();
       this.ctx.moveTo(0, this.tileSize * idx)
@@ -93,30 +90,33 @@ class Game {
       this.ctx.stroke();
     }
 
-    // Rendering a Piece
+    // Draws all of the Pieces that are already "locked in"
     for (let idx = 0; idx < this.pieces.length; idx++) {
       let fixedPiece = this.pieces[idx];
       fixedPiece.draw(this.ctx);
     }
 
+    // Draws the current Piece which is still movable
     this.currPiece.draw(this.ctx);
   }
 
-  // Move the current piece to the right 1 block
+  // Move the current Piece to the right by 1 block if it is a valid position
   stepRight() {
     if (this.currPiece.validHorizontal(1)) {
       this.currPiece.moveRight();
     }
   }
 
-  // Move the current piece to the left 1 block
+  // Move the current Piece to the left by 1 block if it is a valid position
   stepLeft() {
     if (this.currPiece.validHorizontal(-1)) {
       this.currPiece.moveLeft();
     }
   }
 
-  // Move the current piece down 1 block
+  // Move the current Piece down by 1 block if it is a valid position
+  // Otherwise, store the current Piece as a "locked in" Piece, record its
+  // current position, clear rows if any, and then generate a new current Piece
   stepDown() {
     if (this.currPiece.validVertical()) {
       this.currPiece.moveDown();
@@ -131,7 +131,7 @@ class Game {
     }
   }
 
-  // Continuously move the current piece down until collision
+  // Continuously move the current Piece downwards until collision
   dropPiece() {
     let validStep = this.stepDown();
     while (validStep) {
@@ -139,7 +139,8 @@ class Game {
     }
   }
 
-  // Rotates the current piece
+  // Rotates the current Piece by updating its orientation attribute if its
+  // next orientation is a valid position
   rotatePiece() {
     let nextOrientation = (this.currPiece.orientation + 1) % 4;
     if (this.currPiece.validOrientation(nextOrientation)) {
