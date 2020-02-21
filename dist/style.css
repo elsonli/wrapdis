@@ -26,7 +26,8 @@ body {
 }
 
 .game-section-piece-score h1 {
-  color: blue;
+  color: #FFFFFF;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .game-next-piece {
