@@ -4,31 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="reset.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>Wrapdis</title>
 </head>
 <body>
-  <canvas class="game-canvas"></canvas>
-  <section class="game-section">
-    <h1 class="game-title">Wrapdis</h1>
-    <div class="game-section-piece-score">
-      <div>
-        <h1>Next Piece</h1>
-        <canvas class="game-next-piece" width="160" height="160"></canvas>
-      </div>
-      <div>
-        <h1>Saved Piece</h1>
-        <canvas class="game-hold-piece" width="160" height="160"></canvas>
-      </div>
-      <div>
-        <h1>Score</h1>
-        <canvas class="game-score" width="160" height="160"></canvas>
-      </div>
+
+  
+  <div class="game-content">
+    <div class="links">
+      <a class="fa github" target="_blank" href="https://github.com/elsonli">
+        <i class="fab fa-github"></i>
+      </a>
+      <a class="fa linkedin" target="_blank" href="https://linkedin.com/in/elsonli">
+        <i class="fab fa-linkedin"></i>
+      </a>
     </div>
-    <div class="game-section-div">
-    </div>
-    <img src="test2png.png" alt="Key Bindings">
-  </section>
+    <canvas class="game-canvas"></canvas>
+    <section class="game-section">
+      <h1 class="game-title">Wrapdis</h1>
+      <div class="game-section-piece-score">
+        <div>
+          <h1>Next Piece</h1>
+          <canvas class="game-next-piece" width="160" height="160"></canvas>
+        </div>
+        <div>
+          <h1>Saved Piece</h1>
+          <canvas class="game-hold-piece" width="160" height="160"></canvas>
+        </div>
+        <div>
+          <h1>Score</h1>
+          <canvas class="game-score" width="160" height="160"></canvas>
+        </div>
+      </div>
+      <div class="game-section-div">
+      </div>
+      <img src="test2png.png" alt="Key Bindings">
+    </section>
+  </div>
+
   <script src="./main.js"></script>
+
 </body>
 </html>
