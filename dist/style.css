@@ -1,0 +1,35 @@
+body {
+  display: flex;
+  justify-content: center;
+  background-color: #000000;
+}
+
+.game-canvas {
+  border: 5px solid #333333;
+}
+
+.game-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.game-section > div {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.game-next-piece {
+  border: 5px double #444444;
+  background-color: #333333;
+}
+
+.game-score {
+  border: 5px double #444444;
+  background-color: #333333;
+}
+
+.game-section > img {
+  max-width: 800px;
+  max-height: 600px;
+}

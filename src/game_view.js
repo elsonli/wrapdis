@@ -9,31 +9,62 @@ class GameView {
           
           // Left Arrow (Move Piece Left)
           case "ArrowLeft":
-            this.game.stepLeft();
-            this.game.draw(this.ctx);
+            if (!this.paused) {
+              this.game.stepLeft();
+              this.game.draw(this.ctx);
+            }
             break;
 
           // Right Arrow (Move Piece Right)
           case "ArrowRight":
-            this.game.stepRight();
-            this.game.draw(this.ctx);
+            if (!this.paused) {
+              this.game.stepRight();
+              this.game.draw(this.ctx);
+            }
             break;
           
           // Up Arrow (Rotate Piece Clockwise)
           case "ArrowUp":
-            this.game.rotatePiece();
-            this.game.draw(this.ctx);
+            if (!this.paused) {
+              this.game.rotatePiece();
+              this.game.draw(this.ctx);
+            }
             break;
 
           case "ArrowDown":
-            this.game.stepDown();
-            this.game.draw(this.ctx);
+            if (!this.paused) {
+              this.game.stepDown();
+              this.game.draw(this.ctx);
+            }
             break;
           
           // Space (Drop Immediately)
           case "Space":
-            this.game.dropPiece();
-            this.game.draw(this.ctx);
+            if (!this.paused) {
+              this.game.dropPiece();
+              this.game.draw(this.ctx);
+            }
+            break;
+
+          // N Key (New Game)
+          case "KeyN":
+            if (!this.paused) {
+              this.game = new Game(this.ctx, this.controller);
+            }
+            break;
+
+          // Enter Key (Pause Game)
+          case "Enter":
+            if (!this.paused) {
+              this.paused = true;
+              clearInterval(this.interval);
+              cancelAnimationFrame(this.animation);
+              document.getElementById("game-canvas").addEventListener("keydown", this.controller.keyListener.bind(this));
+            } else {
+              this.paused = false;
+              this.animation = requestAnimationFrame(this.animate);
+              document.getElementById("game-canvas").removeEventListener("keydown", this.controller.keyListener.bind(this));
+            }
             break;
         }
       }
@@ -41,6 +72,7 @@ class GameView {
 
     this.ctx = ctx;
     this.game = new Game(this.ctx, this.controller);
+    this.paused = false;
     this.animate = this.animate.bind(this);
     this.interval = setInterval(this.animate, 1000);
     window.addEventListener("keydown", this.controller.keyListener.bind(this));

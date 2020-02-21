@@ -29,7 +29,7 @@ class Game {
         return new Array();
       });
     });
-
+    
     this.generatedPieces = this.generatePieces();
     this.currPiece = this.generatePiece();
   }
@@ -48,7 +48,7 @@ class Game {
 
     // Map all of the keys in `allTetrominoKeys` into Piece objects
     return allTetrominoKeys.map(key => {
-      return JSON.parse(JSON.stringify(allTetrominos[key]));
+      return new Piece(JSON.parse(JSON.stringify(allTetrominos[key])), this);
     });
   }
 
@@ -57,11 +57,7 @@ class Game {
     if (!this.generatedPieces.length) {
       this.generatedPieces = this.generatePieces();
     }
-    let randTetromino = this.generatedPieces.pop();
-    // Used for specific piece testing
-    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
-
-    return new Piece(randTetromino, this);
+    return this.generatedPieces.pop();
   }
 
   // Draws the game board, locked Pieces, and current Piece
@@ -96,6 +92,62 @@ class Game {
 
     // Draws the current Piece which is still movable
     this.currPiece.draw(this.ctx);
+
+
+
+    // Draws the next Piece onto the corresponding section of the page
+    if (!this.generatedPieces.length) {
+      this.generatedPieces = this.generatePieces();
+    }
+    let nextPiece = this.generatedPieces[this.generatedPieces.length - 1];
+    let nextPieceEle = document.getElementsByClassName("game-next-piece")[0];
+    let nextPieceCtx = nextPieceEle.getContext("2d");
+    let numRowsCols = nextPieceEle.width / this.tileSize;
+    nextPieceCtx.clearRect(0, 0, nextPieceEle.width, nextPieceEle.width);
+    
+    // Constructs and draws the vertical lines for the next Piece preview
+    nextPieceCtx.strokeStyle = "#777777";
+    for (let idx = 0; idx < numRowsCols; idx++) {
+      nextPieceCtx.beginPath();
+      nextPieceCtx.moveTo(this.tileSize * idx, 0);
+      nextPieceCtx.lineTo(this.tileSize * idx, this.tileSize * numRowsCols);
+      nextPieceCtx.stroke();
+    }
+
+    // Constructs and draws the horizontal lines for the next Piece preview
+    for (let idx = 0; idx < numRowsCols; idx++) {
+      nextPieceCtx.beginPath();
+      nextPieceCtx.moveTo(0, this.tileSize * idx)
+      nextPieceCtx.lineTo(nextPieceEle.width, this.tileSize * idx);
+      nextPieceCtx.stroke();
+    }
+
+    // Draws the next Piece onto the preview
+    let firstOrientation = nextPiece.orientations[nextPiece.orientation];
+    for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
+      let currBit = (firstOrientation & (1 << shiftAmt)) >> shiftAmt;
+      let [colShift, rowShift] = nextPiece.calculateShift(shiftAmt);
+
+      // Only need to color in the blocks with a 1 bit
+      if (currBit) {
+        nextPieceCtx.fillStyle = nextPiece.color;
+        nextPieceCtx.fillRect(
+          colShift * this.tileSize,
+          rowShift * this.tileSize,
+          this.tileSize,
+          this.tileSize
+        );
+      }
+    }
+
+    // let scoreNode = document.createElement("h1");
+    // let textNode = document.createTextNode("Scawrawrore");
+    // scoreNode.appendChild(textNode);
+    // nextPieceEle.appendChild(scoreNode);
+    // nextPieceCtx.fillStyle = "#FFFFFF";
+    // nextPieceCtx.textAlign = "center";
+    // nextPieceCtx.font = "40px Helvetica";
+    // nextPieceCtx.fillText(`Score: ${ this.score }`, nextPieceEle.width / 2, nextPieceEle.width / 2);
   }
 
   // Move the current Piece to the right by 1 block if it is a valid position
@@ -247,7 +299,11 @@ class Game {
 
   // Checks whether or not the game is over and returns a boolean
   gameOver() {
-    return this.currPiece.validVertical() ? false : true;
+    const checkTile1 = this.tilesOccupied[Math.floor(this.numCols / 2) - 2][0];
+    const checkTile2 = this.tilesOccupied[Math.floor(this.numCols / 2) - 1][0];
+    const checkTile3 = this.tilesOccupied[Math.floor(this.numCols / 2)][0];
+    const checkTile4 = this.tilesOccupied[Math.floor(this.numCols / 2) + 1][0];
+    return (checkTile1 || checkTile2 || checkTile3 || checkTile4) ? true : false;
   }
 }
 

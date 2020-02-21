@@ -4,10 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Bandori Tetris</title>
+  <link rel="stylesheet" href="style.css">
+  <title>Wrapdis</title>
 </head>
 <body>
-  <canvas></canvas>
+  <canvas class="game-canvas"></canvas>
+  <section class="game-section">
+    <div class="game-section-div">
+      <canvas class="game-next-piece" width="160" height="160"></canvas>
+      <canvas class="game-score" width="160" height="160"></canvas>
+    </div>
+    <img src="testpng.png" alt="Key Bindings">
+  </section>
   <script src="./main.js"></script>
 </body>
 </html>
