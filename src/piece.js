@@ -14,7 +14,7 @@ class Piece {
     return [colShift, rowShift];
   }
 
-  // Draws a piece onto the game board
+  // Draws a Piece onto the game board
   draw() {
     let [colPos, rowPos] = this.pos;
     
@@ -40,7 +40,7 @@ class Piece {
           this.game.tileSize
         );
       } else {
-        // REMOVE
+        // Draws the region occupied by the Piece, with overlapping gray tiles
         // this.game.ctx.fillStyle = "#444444";
         // this.game.ctx.fillRect(
         //   newColPos * this.game.tileSize,
@@ -114,8 +114,6 @@ class Piece {
   recordPiece() {
     let [colPos, rowPos] = this.pos;
     let currOrientation = this.orientations[this.orientation];
-
-    // if (!bool) this.game.pieceMatrix[colPos][rowPos] = null;
 
     for (let shiftAmt = 15; shiftAmt >= 0; shiftAmt--) {
       let currBit = (currOrientation & (1 << shiftAmt)) >> shiftAmt;
