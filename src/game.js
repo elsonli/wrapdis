@@ -149,6 +149,7 @@ class Game {
   }
 
   // If there exists a row to clear, return that row's index, and -1 otherwise
+  // Rows are checked from the bottom of the grid to the top of the grid
   findRowToClear() {
     for (let rowIdx = this.numRows - 1; rowIdx >= 0; rowIdx--) {
       let row = this.tilesOccupied.map((col, colIdx) => this.tilesOccupied[colIdx][rowIdx]);
@@ -168,17 +169,23 @@ class Game {
     }
   }
 
+  // Clears filled rows from the game board, run on every dropped piece
   clearRows() {
     let rowToClear = this.findRowToClear();
 
     while (rowToClear >= 0) {
       this.updateTilesOccupied(rowToClear);
 
-      // Update piece orientations for drawing logic
+      // Update Piece orientations for drawing logic starting from `rowToClear`
       for (let pieceMatrixCol = 0; pieceMatrixCol < this.numCols; pieceMatrixCol++) {
         for (let pieceMatrixRow = rowToClear; pieceMatrixRow >= 0; pieceMatrixRow--) {
+
+          // `piecesArr` contains Piece starting points (Piece's top left tile)
           let piecesArr = this.pieceMatrix[pieceMatrixCol][pieceMatrixRow];
           if (piecesArr.length) {
+
+            // Keep track of the Pieces that need to be shifted downwards into
+            // the tile directly underneath in `this.pieceMatrix`
             let trackIdxs = [];
             for (let pieceIdx = piecesArr.length - 1; pieceIdx >= 0; pieceIdx--) {
               let piece = piecesArr[pieceIdx];
@@ -196,6 +203,7 @@ class Game {
               // The `rowToClear` is within the bounds of the considered piece
               // Delete that portion of the piece's orientation and update the
               // piece's orientation array to reflect the change
+              // However, the Piece's position does not need to be changed
               } else {
                 let [colPos, rowPos] = piece.pos;
                 let currOrientation = piece.orientations[piece.orientation];
@@ -212,7 +220,7 @@ class Game {
               }
             }
 
-            // `trackIdxs` will be an array of piece indices within `piecesArr`
+            // `trackIdxs` will be an array of Piece indices within `piecesArr`
             // in decreasing order that needs to be shifted down by 1
             for (let idx = 0; idx < trackIdxs.length; idx++) {
               let trackIdx = trackIdxs[idx];
@@ -220,7 +228,8 @@ class Game {
               this.pieceMatrix[pieceMatrixCol][pieceMatrixRow + 1].push(trackPiece);
             }
 
-            // Remove the tracked pieces from the current `piecesArr`
+            // Remove the tracked Pieces from the current `piecesArr`, which
+            // will also affect `this.pieceMatrix` due to reference
             for (let idx = 0; idx < trackIdxs.length; idx++) {
               let trackIdx = trackIdxs[idx];
               piecesArr.splice(trackIdx, 1);
@@ -229,6 +238,7 @@ class Game {
         }
       }
 
+      // Keep updating `rowToClear` until there are no more rows to clear
       rowToClear = this.findRowToClear();
     }
   }
