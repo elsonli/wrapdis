@@ -2,7 +2,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: #000000;
-  padding-top: 20%;
+  padding-top: 15%;
 }
 
 .game-canvas {
