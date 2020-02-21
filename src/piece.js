@@ -2,7 +2,7 @@ class Piece {
   constructor(tetromino, game) {
     this.game = game;
     this.color = tetromino.color;
-    this.pos = [Math.floor(this.game.numCols / 2) - 1, -2];
+    this.pos = [Math.floor(this.game.numCols / 2) - 1, -3];
     this.orientation = tetromino.orientation;
     this.orientations = tetromino.orientations;
   }

@@ -46,25 +46,29 @@ class GameView {
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
   }
 
+  // This function will be continuously called until the game is over, and
+  // will progress the game by moving down the current Piece
   animate() {
-    // if (!this.game.gameOver) {
-    this.game.stepDown();
-    this.game.draw(this.ctx);
-    // } else {
-      // this.stop();
-    // }
+    if (!this.game.gameOver()) {
+      this.game.stepDown();
+      this.game.draw(this.ctx);
+    } else {
+      this.stop();
+    }
   }
 
+  // Starts the game by requesting an animation frame using `this.animate`
   start() {
     this.game.draw(this.ctx);
     this.animation = requestAnimationFrame(this.animate);
   }
 
+  // Stops the game from running by clearing the stored interval, clearing the
+  // stored animation frame, as well as removing the window's event listener
   stop() {
-  //   this.ctx.fillStyle = "white";
-  //   this.ctx.font = "30px Arial";
-  //   this.ctx.fillText(this.game.score, 200, 830);
+    clearInterval(this.interval);
     cancelAnimationFrame(this.animation);
+    window.removeEventListener("keydown", this.controller.keyListener.bind(this));
   }
 }
 

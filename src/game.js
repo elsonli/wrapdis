@@ -6,9 +6,9 @@ class Game {
   constructor(ctx, controller) {
     this.ctx = ctx;
     this.pieces = [];
-    this.gameOver = false;
+    // this.gameOver = false;
     this.controller = controller;
-    // this.score = 0;
+    this.score = 0;
 
     this.dimX = GameUtils.DIM_X;
     this.dimY = GameUtils.DIM_Y;
@@ -59,11 +59,15 @@ class Game {
       this.generatedPieces = this.generatePieces();
     }
     let randTetromino = this.generatedPieces.pop();
-
     // Used for specific piece testing
     // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
 
-    return new Piece(randTetromino, this);
+    let randPiece = new Piece(randTetromino, this);
+    // if (!randPiece.validVertical()) {
+      // this.gameOver = true;
+    // } else {
+      return randPiece;
+    // }
   }
 
   // Draws the game board, locked Pieces, and current Piece
@@ -171,9 +175,11 @@ class Game {
 
   // Clears filled rows from the game board, run on every dropped piece
   clearRows() {
+    let clearedRows = 0;
     let rowToClear = this.findRowToClear();
 
     while (rowToClear >= 0) {
+      clearedRows += 1;
       this.updateTilesOccupied(rowToClear);
 
       // Update Piece orientations for drawing logic starting from `rowToClear`
@@ -241,14 +247,14 @@ class Game {
       // Keep updating `rowToClear` until there are no more rows to clear
       rowToClear = this.findRowToClear();
     }
+
+    this.score += clearedRows * 200;
   }
 
-//   gameOver() {
-//     if (this.filledTiles[3][0] || this.filledTiles[4][0] || this.filledTiles[5][0] || this.filledTiles[6][0]) {
-//       return true;
-//     }
-//     return false;
-//   }
+  // Checks whether or not the game is over and returns a boolean
+  gameOver() {
+    return this.currPiece.validVertical() ? false : true;
+  }
 }
 
 export default Game;
