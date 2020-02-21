@@ -17,24 +17,51 @@ class Game {
     this.gridColor = GameUtils.BG_COLOR;
     this.tileSize = GameUtils.TILE_SIZE;
 
+    // Keep track of the tiles currently occupied on the grid using booleans
+    // A Piece is comprised of 16 tiles, but only 4 tiles will be true
     this.tilesOccupied = new Array(this.numCols).fill(0).map(() => {
       return new Array(this.numRows).fill(false);
     });
 
+    // Keep track of Pieces by pushing them into a matrix of arrays using the
+    // Piece's position (all tiles are offset relative to the top left tile)
     this.pieceMatrix = new Array(this.numCols).fill(0).map(() => {
       return new Array(this.numRows).fill(0).map(() => {
         return new Array();
       });
     });
 
+    this.generatedPieces = this.generatePieces();
     this.currPiece = this.generatePiece();
   }
   
-  // Returns a new and random Piece
-  generatePiece() {
+  // Generates a set of random tetrominos stored in `this.generatedPieces`
+  generatePieces() {
     const allTetrominoKeys = Object.keys(allTetrominos);
-    const randTetrominoKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
-    const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randTetrominoKey]));
+
+    // Shuffle the keys obtained from `allTetrominoKeys`
+    for (let idx = allTetrominoKeys.length - 1; idx > 0; idx--) {
+      const jdx = Math.floor(Math.random() * idx);
+      const tempKey = allTetrominoKeys[idx];
+      allTetrominoKeys[idx] = allTetrominoKeys[jdx];
+      allTetrominoKeys[jdx] = tempKey;
+    }
+
+    // Map all of the keys in `allTetrominoKeys` into Piece objects
+    return allTetrominoKeys.map(key => {
+      return JSON.parse(JSON.stringify(allTetrominos[key]));
+    });
+  }
+
+  // Returns a new and random Piece by sampling from `this.generatedPieces`
+  generatePiece() {
+    if (!this.generatedPieces.length) {
+      this.generatedPieces = this.generatePieces();
+    }
+    let randTetromino = this.generatedPieces.pop();
+    // const allTetrominoKeys = Object.keys(allTetrominos);
+    // const randTetrominoKey = allTetrominoKeys[Math.floor(Math.random() * allTetrominoKeys.length)];
+    // const randTetromino = JSON.parse(JSON.stringify(allTetrominos[randTetrominoKey]));
 
     // Used for specific piece testing
     // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
