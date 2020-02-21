@@ -62,12 +62,7 @@ class Game {
     // Used for specific piece testing
     // const randTetromino = JSON.parse(JSON.stringify(allTetrominos["tetrominoI"]));
 
-    let randPiece = new Piece(randTetromino, this);
-    // if (!randPiece.validVertical()) {
-      // this.gameOver = true;
-    // } else {
-      return randPiece;
-    // }
+    return new Piece(randTetromino, this);
   }
 
   // Draws the game board, locked Pieces, and current Piece
