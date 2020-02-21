@@ -6,7 +6,6 @@ class Game {
   constructor(ctx, controller) {
     this.ctx = ctx;
     this.pieces = [];
-    // this.gameOver = false;
     this.controller = controller;
     this.score = 0;
 
