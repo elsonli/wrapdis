@@ -57,14 +57,14 @@ class GameView {
           case "KeyC":
             if (!this.paused && !this.game.gameOver()) {
               let currPiece = this.game.currPiece;
-              let holdPiece = this.game.holdPiece;
-              if (holdPiece) {
-                if (holdPiece.validOrientation(holdPiece.orientation)) {
-                  this.game.currPiece = holdPiece;
-                  this.game.holdPiece = currPiece;
-                }
+              let savedPiece = this.game.savedPiece;
+              if (savedPiece) {
+                currPiece.pos = currPiece.startPos.slice();
+                this.game.currPiece = savedPiece;
+                this.game.savedPiece = currPiece;
               } else {
-                this.game.holdPiece = this.game.currPiece;
+                currPiece.pos = currPiece.startPos.slice();
+                this.game.savedPiece = currPiece;
                 this.game.currPiece = this.game.generatePiece();
               }
             }

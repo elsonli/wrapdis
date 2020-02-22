@@ -3,7 +3,6 @@ body {
   background-color: #000000;
   min-width: 1200px;
   max-width: 1500px;
-  /* margin: auto; */
   overflow: hidden;
   transform: translate(-50%, -50%);
   top: 50%;

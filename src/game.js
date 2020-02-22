@@ -15,6 +15,7 @@ class Game {
     this.numRows = GameUtils.NUM_ROWS;
     this.gridColor = GameUtils.BG_COLOR;
     this.tileSize = GameUtils.TILE_SIZE;
+    this.startPos = [Math.floor(this.numCols / 2) - 1, -3];
 
     // Keep track of the tiles currently occupied on the grid using booleans
     // A Piece is comprised of 16 tiles, but only 4 tiles will be true
@@ -32,7 +33,7 @@ class Game {
     
     this.generatedPieces = this.generatePieces();
     this.currPiece = this.generatePiece();
-    this.holdPiece = null;
+    this.savedPiece = null;
   }
   
   // Generates a set of random tetrominos stored in `this.generatedPieces`
@@ -100,10 +101,10 @@ class Game {
     let numRowsCols = nextPieceEle.width / this.tileSize;
     this.drawPieceOnCtx(nextPiece, nextPieceEle, nextPieceCtx, numRowsCols);
 
-    let holdPiece = this.holdPiece;
+    let savedPiece = this.savedPiece;
     let holdPieceEle = document.getElementsByClassName("game-hold-piece")[0];
     let holdPieceCtx = holdPieceEle.getContext("2d");
-    this.drawPieceOnCtx(holdPiece, holdPieceEle, holdPieceCtx, numRowsCols);
+    this.drawPieceOnCtx(savedPiece, holdPieceEle, holdPieceCtx, numRowsCols);
 
     let scoreEle = document.getElementsByClassName("game-score")[0];
     let scoreCtx = scoreEle.getContext("2d");
