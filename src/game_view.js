@@ -8,15 +8,14 @@ class GameView {
         switch (event.code) {
           case "Enter":
             if (this.paused) {
-              window.addEventListener("keydown", this.controller.keyListener);
-            } else {
               window.removeEventListener("keydown", this.controller.keyListener);
+            } else {
+              window.addEventListener("keydown", this.controller.keyListener);
             }
         }
       },
       keyListener: event => {
         switch (event.code) {
-          
           // Left Arrow (Move Piece Left)
           case "ArrowLeft":
             if (!this.paused && !this.game.gameOver()) {
@@ -85,14 +84,14 @@ class GameView {
             let currTime = Date.now();
             if (currTime - this.lastTime < 100) return;
             this.lastTime = currTime;
-            if (this.paused) {
-              window.removeEventListener("keydown", this.controller.pauseListener(event));
-              this.start();
-            } else {
-              window.addEventListener("keydown", this.controller.pauseListener(event));
-              this.stop();
-            }
             this.paused = !this.paused;
+            if (this.paused) {
+              window.addEventListener("keydown", this.controller.pauseListener);
+              this.stop();
+            } else {
+              window.removeEventListener("keydown", this.controller.pauseListener);
+              this.start();
+            }
             break;
         }
       }
@@ -104,6 +103,7 @@ class GameView {
     this.game = new Game(this.ctx, this.controller);
     this.controller.keyListener = this.controller.keyListener.bind(this);
     this.controller.pauseListener = this.controller.pauseListener.bind(this);
+    window.addEventListener("keydown", this.controller.keyListener.bind(this));
   }
   
   // This function will be continuously called until the game is over, and
@@ -123,7 +123,6 @@ class GameView {
     this.game.draw(this.ctx);
     this.interval = setInterval(this.animate, 1000);
     this.animation = requestAnimationFrame(this.animate);
-    window.addEventListener("keydown", this.controller.keyListener.bind(this));
   }
 
   // Stops the game from running by clearing the stored interval, clearing the
