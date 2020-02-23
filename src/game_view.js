@@ -12,6 +12,7 @@ class GameView {
             } else {
               window.addEventListener("keydown", this.controller.keyListener);
             }
+            break;
         }
       },
       keyListener: event => {
@@ -57,9 +58,7 @@ class GameView {
 
           // N Key (New Game)
           case "KeyN":
-            if (!this.paused && !this.game.gameOver()) {
-              this.game = new Game(this.ctx, this.controller);
-            }
+            this.game = new Game(this.ctx, this.controller);
             break;
 
           // C Key (Hold Piece)
@@ -87,9 +86,10 @@ class GameView {
             this.paused = !this.paused;
 
             let pauseNode = document.getElementsByClassName("pause-screen")[0];
+            let gameOverNode = document.getElementsByClassName("game-over-screen")[0];
             if (this.paused && !this.game.gameOver()) {
               pauseNode.classList.add("pause-overlay");
-              pauseNode.innerText = "Paused"
+              pauseNode.innerText = "Paused";
               window.addEventListener("keydown", this.controller.pauseListener);
               this.stop();
             } else {

@@ -313,7 +313,18 @@ class Game {
     const checkTile2 = this.tilesOccupied[Math.floor(this.numCols / 2) - 1][0];
     const checkTile3 = this.tilesOccupied[Math.floor(this.numCols / 2)][0];
     const checkTile4 = this.tilesOccupied[Math.floor(this.numCols / 2) + 1][0];
-    return (checkTile1 || checkTile2 || checkTile3 || checkTile4) ? true : false;
+    if (checkTile1 || checkTile2 || checkTile3 || checkTile4) {
+      let gameOverNode = document.getElementsByClassName("game-over-screen")[0];
+      gameOverNode.classList.add("pause-overlay");
+      gameOverNode.innerText = "Game Over";
+      let restartNode = document.createElement("button");
+      restartNode.setAttribute("onClick", "history.go(0)");
+      restartNode.innerHTML = "New Game";
+      restartNode.classList.add("restart-game");
+      gameOverNode.appendChild(restartNode);
+      return true;
+    }
+    return false;
   }
 }
 

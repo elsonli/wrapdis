@@ -68,6 +68,16 @@ body > div {
   color: #FFFFFF;
 }
 
+.restart-game {
+  position: absolute;
+  top: 55%;
+  left: 40%;
+  height: 5%;
+  width: 25%;
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
 .game-section {
   margin-left: 3%;
   display: flex;
