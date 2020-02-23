@@ -4,7 +4,7 @@ class GameView {
   constructor(ctx) {
     // Delegates to the Game class based on the pressed key
     this.controller = {
-      pauseListener: event => {        
+      pauseListener: event => {
         switch (event.code) {
           case "Enter":
             if (this.paused) {
@@ -86,7 +86,6 @@ class GameView {
             this.paused = !this.paused;
 
             let pauseNode = document.getElementsByClassName("pause-screen")[0];
-            let gameOverNode = document.getElementsByClassName("game-over-screen")[0];
             if (this.paused && !this.game.gameOver()) {
               pauseNode.classList.add("pause-overlay");
               pauseNode.innerText = "Paused";
@@ -110,6 +109,11 @@ class GameView {
     this.controller.keyListener = this.controller.keyListener.bind(this);
     this.controller.pauseListener = this.controller.pauseListener.bind(this);
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
+
+    this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
+    // let themeNode = document.getElementById("theme-song")
+    // themeNode.currentTime = 0;
+    // themeNode.play();
   }
   
   // This function will be continuously called until the game is over, and
