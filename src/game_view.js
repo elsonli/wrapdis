@@ -4,6 +4,16 @@ class GameView {
   constructor(ctx) {
     // Delegates to the Game class based on the pressed key
     this.controller = {
+      pauseListener: event => {        
+        switch (event.code) {
+          case "Enter":
+            if (this.paused) {
+              window.addEventListener("keydown", this.controller.keyListener);
+            } else {
+              window.removeEventListener("keydown", this.controller.keyListener);
+            }
+        }
+      },
       keyListener: event => {
         switch (event.code) {
           
@@ -72,29 +82,30 @@ class GameView {
 
           // Enter Key (Pause Game)
           case "Enter":
-            if (!this.paused && !this.game.gameOver()) {
-              this.paused = true;
-              clearInterval(this.interval);
-              cancelAnimationFrame(this.animation);
-              window.addEventListener("keydown", this.controller.keyListener.bind(this));
+            let currTime = Date.now();
+            if (currTime - this.lastTime < 100) return;
+            this.lastTime = currTime;
+            if (this.paused) {
+              window.removeEventListener("keydown", this.controller.pauseListener(event));
+              this.start();
             } else {
-              this.paused = false;
-              this.animation = requestAnimationFrame(this.animate);
-              window.removeEventListener("keydown", this.controller.keyListener.bind(this));
+              window.addEventListener("keydown", this.controller.pauseListener(event));
+              this.stop();
             }
+            this.paused = !this.paused;
             break;
         }
       }
     };
 
     this.ctx = ctx;
-    this.game = new Game(this.ctx, this.controller);
     this.paused = false;
     this.animate = this.animate.bind(this);
-    this.interval = setInterval(this.animate, 1000);
-    window.addEventListener("keydown", this.controller.keyListener.bind(this));
+    this.game = new Game(this.ctx, this.controller);
+    this.controller.keyListener = this.controller.keyListener.bind(this);
+    this.controller.pauseListener = this.controller.pauseListener.bind(this);
   }
-
+  
   // This function will be continuously called until the game is over, and
   // will progress the game by moving down the current Piece
   animate() {
@@ -105,11 +116,14 @@ class GameView {
       this.stop();
     }
   }
-
+  
   // Starts the game by requesting an animation frame using `this.animate`
   start() {
+    this.lastTime = Date.now();
     this.game.draw(this.ctx);
+    this.interval = setInterval(this.animate, 1000);
     this.animation = requestAnimationFrame(this.animate);
+    window.addEventListener("keydown", this.controller.keyListener.bind(this));
   }
 
   // Stops the game from running by clearing the stored interval, clearing the
