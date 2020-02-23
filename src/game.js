@@ -308,6 +308,7 @@ class Game {
   }
 
   // Checks whether or not the game is over and returns a boolean
+  // Shows a Game Over screen when the game is over and prompts for a New Game
   gameOver() {
     const checkTile1 = this.tilesOccupied[Math.floor(this.numCols / 2) - 2][0];
     const checkTile2 = this.tilesOccupied[Math.floor(this.numCols / 2) - 1][0];
