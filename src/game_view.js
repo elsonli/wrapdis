@@ -85,10 +85,16 @@ class GameView {
             if (currTime - this.lastTime < 100) return;
             this.lastTime = currTime;
             this.paused = !this.paused;
-            if (this.paused) {
+
+            let pauseNode = document.getElementsByClassName("pause-screen")[0];
+            if (this.paused && !this.game.gameOver()) {
+              pauseNode.classList.add("pause-overlay");
+              pauseNode.innerText = "Paused"
               window.addEventListener("keydown", this.controller.pauseListener);
               this.stop();
             } else {
+              pauseNode.classList.remove("pause-overlay");
+              pauseNode.innerText = "";
               window.removeEventListener("keydown", this.controller.pauseListener);
               this.start();
             }
