@@ -40,7 +40,7 @@ class Game {
   generatePieces() {
     const allTetrominoKeys = Object.keys(allTetrominoes);
 
-    // Shuffle the keys contained in `allTetrominoKeys`
+    // Shuffle the keys contained in `allTetrominoKeys` in place
     for (let idx = allTetrominoKeys.length - 1; idx > 0; idx--) {
       const jdx = Math.floor(Math.random() * idx);
       const tempKey = allTetrominoKeys[idx];
@@ -48,7 +48,7 @@ class Game {
       allTetrominoKeys[jdx] = tempKey;
     }
 
-    // Map all of the keys in `allTetrominoKeys` into Piece objects
+    // Map all of the shuffled keys in `allTetrominoKeys` into Piece objects
     return allTetrominoKeys.map(key => {
       return new Piece(JSON.parse(JSON.stringify(allTetrominoes[key])), this);
     });
