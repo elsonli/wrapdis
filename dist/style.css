@@ -1,6 +1,7 @@
 body {
   position: relative;
   background-color: #000000;
+  height: 500px;
   min-width: 1200px;
   max-width: 1500px;
   overflow: hidden;
