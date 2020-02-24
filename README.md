@@ -1,6 +1,6 @@
 # Bandori Tetris
 
-<a href="https://elsonli.github.io/bandori-tetris/">Live Link</a>
+<a href="https://elsonli.github.io/wrapdis/">Live Link</a>
 
 <img src="https://i.imgur.com/Hw6DJm4.png" width="400" height="800"/>
 
