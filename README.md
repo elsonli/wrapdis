@@ -19,7 +19,7 @@ Wrapdis is a fully interactive JavaScript and HTML5 Canvas game based on the cla
 * Storing and swapping the current piece (panel on the right)
 * Scoring system based on the number of cleared rows (panel on the right)
 * Wrapping pieces around the game canvas to allow for more creative plays
-* Key bindings are straight-forward and visually appealing
+* Instructions are straight-forward and key bindings are visually appealing
 
 ## Controls
 * Keydown event listeners were placed onto the window and utilized a switch statement to handle different key codes
