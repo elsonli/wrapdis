@@ -40,7 +40,7 @@ class Game {
   generatePieces() {
     const allTetrominoKeys = Object.keys(allTetrominoes);
 
-    // Shuffle the keys obtained from `allTetrominoKeys`
+    // Shuffle the keys contained in `allTetrominoKeys`
     for (let idx = allTetrominoKeys.length - 1; idx > 0; idx--) {
       const jdx = Math.floor(Math.random() * idx);
       const tempKey = allTetrominoKeys[idx];
