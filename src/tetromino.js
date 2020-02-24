@@ -1,4 +1,4 @@
-export const allTetrominos = {
+export const allTetrominoes = {
   tetrominoI: {
     orientation: 0,
     orientations: [0x0F00, 0x2222, 0x00F0, 0x4444],
@@ -36,4 +36,4 @@ export const allTetrominos = {
   }
 }
 
-export default allTetrominos;
+export default allTetrominoes;

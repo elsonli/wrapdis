@@ -1,6 +1,6 @@
 import Piece from "./piece";
 import * as GameUtils from "./utils";
-import allTetrominos from "./tetromino";
+import allTetrominoes from "./tetromino";
 
 class Game {
   constructor(ctx, controller) {
@@ -36,9 +36,9 @@ class Game {
     this.savedPiece = null;
   }
   
-  // Generates a set of random tetrominos stored in `this.generatedPieces`
+  // Generates a set of random tetrominoes stored in `this.generatedPieces`
   generatePieces() {
-    const allTetrominoKeys = Object.keys(allTetrominos);
+    const allTetrominoKeys = Object.keys(allTetrominoes);
 
     // Shuffle the keys obtained from `allTetrominoKeys`
     for (let idx = allTetrominoKeys.length - 1; idx > 0; idx--) {
@@ -50,7 +50,7 @@ class Game {
 
     // Map all of the keys in `allTetrominoKeys` into Piece objects
     return allTetrominoKeys.map(key => {
-      return new Piece(JSON.parse(JSON.stringify(allTetrominos[key])), this);
+      return new Piece(JSON.parse(JSON.stringify(allTetrominoes[key])), this);
     });
   }
 
