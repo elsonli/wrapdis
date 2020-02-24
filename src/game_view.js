@@ -109,11 +109,7 @@ class GameView {
     this.controller.keyListener = this.controller.keyListener.bind(this);
     this.controller.pauseListener = this.controller.pauseListener.bind(this);
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
-
-    this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
-    // let themeNode = document.getElementById("theme-song")
-    // themeNode.currentTime = 0;
-    // themeNode.play();
+    // this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
   }
   
   // This function will be continuously called until the game is over, and
