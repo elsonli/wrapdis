@@ -2,7 +2,7 @@
 
 <a href="https://elsonli.github.io/wrapdis/">Live Link</a>
 
-<img src="https://i.imgur.com/kAUmfB2.png" width="1000" height="900"/>
+<img src="https://i.imgur.com/E5qYxsO.png" width="1000" height="900"/>
 
 Wrapdis is a fully interactive JavaScript and HTML5 Canvas game based on the classic tile-matching puzzle game. Players gradually fill up the rows of the game board using randomly generated pieces. After a row has been completely filled, it will be cleared from the game board. The game ends when the center tiles of the top row are filled, which prevents any additional pieces from being generated.
 
