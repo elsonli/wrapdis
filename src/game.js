@@ -319,7 +319,8 @@ class Game {
       gameOverNode.classList.add("pause-overlay");
       gameOverNode.innerText = "Game Over";
       let restartNode = document.createElement("button");
-      restartNode.setAttribute("onClick", "history.go(0)");
+      restartNode.onclick = () => history.go(0);
+      // restartNode.setAttribute("onClick", "history.go(0)");
       restartNode.innerHTML = "Play Again";
       restartNode.classList.add("restart-game");
       gameOverNode.appendChild(restartNode);
