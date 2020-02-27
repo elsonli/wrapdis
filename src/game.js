@@ -320,7 +320,7 @@ class Game {
       gameOverNode.innerText = "Game Over";
       let restartNode = document.createElement("button");
       restartNode.setAttribute("onClick", "history.go(0)");
-      restartNode.innerHTML = "New Game";
+      restartNode.innerHTML = "Play Again";
       restartNode.classList.add("restart-game");
       gameOverNode.appendChild(restartNode);
       return true;
