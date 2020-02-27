@@ -320,10 +320,13 @@ class Game {
       gameOverNode.innerText = "Game Over";
       let restartNode = document.createElement("button");
       restartNode.onclick = () => history.go(0);
-      // restartNode.setAttribute("onClick", "history.go(0)");
       restartNode.innerHTML = "Play Again";
       restartNode.classList.add("restart-game");
       gameOverNode.appendChild(restartNode);
+
+      // A hacky way to update the highest score for the current session
+      let highestScore = window.name || 0;
+      if (this.score > highestScore) window.name = this.score;
       return true;
     }
     return false;

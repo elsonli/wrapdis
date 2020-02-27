@@ -23,8 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
     new GameView(ctx).start();
     startGameNode.removeChild(startNode);
   };
-  
+
   startNode.innerHTML = "Start Game";
   startNode.classList.add("start-game");
   startGameNode.appendChild(startNode);
+
+  // A hacky way to store the score on the window and persist through refresh
+  let highScoreNode = document.getElementsByClassName("high-score")[0];
+  let highestScore = window.name || 0;
+  highScoreNode.innerText = `Highest Session Score: ${ highestScore || 0 }`;
 });
