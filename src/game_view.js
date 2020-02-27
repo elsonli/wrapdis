@@ -87,11 +87,13 @@ class GameView {
 
             let pauseNode = document.getElementsByClassName("pause-screen")[0];
             if (this.paused && !this.game.gameOver()) {
+              this.themeSong.pause();
               pauseNode.classList.add("pause-overlay");
               pauseNode.innerText = "Paused";
               window.addEventListener("keydown", this.controller.pauseListener);
               this.stop();
             } else {
+              this.themeSong.play();
               pauseNode.classList.remove("pause-overlay");
               pauseNode.innerText = "";
               window.removeEventListener("keydown", this.controller.pauseListener);
@@ -109,7 +111,7 @@ class GameView {
     this.controller.keyListener = this.controller.keyListener.bind(this);
     this.controller.pauseListener = this.controller.pauseListener.bind(this);
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
-    // this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
+    this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
   }
   
   // This function will be continuously called until the game is over, and
@@ -129,6 +131,7 @@ class GameView {
     this.game.draw(this.ctx);
     this.interval = setInterval(this.animate, 1000);
     this.animation = requestAnimationFrame(this.animate);
+    this.themeSong.play();
   }
 
   // Stops the game from running by clearing the stored interval, clearing the
@@ -137,6 +140,7 @@ class GameView {
     clearInterval(this.interval);
     cancelAnimationFrame(this.animation);
     window.removeEventListener("keydown", this.controller.keyListener.bind(this));
+    this.themeSong.pause();
   }
 }
 
