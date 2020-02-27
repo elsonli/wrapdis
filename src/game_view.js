@@ -78,6 +78,16 @@ class GameView {
             }
             break;
 
+          case "KeyM":
+            if (this.muted) {
+              this.themeSong.play();
+              this.muted = false;
+            } else {
+              this.themeSong.pause();
+              this.muted = true;
+            }
+            break;
+
           // Enter Key (Pause Game)
           case "Enter":
             let currTime = Date.now();
@@ -111,6 +121,7 @@ class GameView {
     this.controller.keyListener = this.controller.keyListener.bind(this);
     this.controller.pauseListener = this.controller.pauseListener.bind(this);
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
+    this.muted = false;
     this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
   }
   
@@ -131,7 +142,7 @@ class GameView {
     this.game.draw(this.ctx);
     this.interval = setInterval(this.animate, 1000);
     this.animation = requestAnimationFrame(this.animate);
-    this.themeSong.play();
+    if (!this.muted) this.themeSong.play();
   }
 
   // Stops the game from running by clearing the stored interval, clearing the
