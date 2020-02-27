@@ -20,6 +20,7 @@ Wrapdis is a fully interactive JavaScript and HTML5 Canvas game based on the cla
 * Scoring system based on the number of cleared rows (panel on the right)
 * Wrapping pieces around the game canvas to allow for more creative plays
 * Instructions are straight-forward and key bindings are visually appealing
+* Music plays in the background during gameplay (mute option available)
 
 ## Controls
 * Keydown event listeners were placed onto the window and utilized a switch statement to handle different key codes
@@ -30,6 +31,11 @@ Wrapdis is a fully interactive JavaScript and HTML5 Canvas game based on the cla
     * The game is stepped continuously until a collision has been detected
     * One matrix was used to determine whether or not a tile on the game board is occupied
     * Another matrix was used to track information about pieces for other collision and rendering logic
+  * Other keyboard keys are used to achieve various additional functionality
+    * The C key is used to store the current piece or swap with an already saved piece
+    * The N key is used to restart the game when the game is in the play state
+    * The M key is used to mute and unmute the music that plays in the background
+    * The Enter key is used to pause and unpause the game at any point during a session
   
 ## Piece and Game Canvas Rendering
 * The game canvas, current piece, next piece, saved piece, and current score are drawn onto the screen using `HTML5 Canvas`
@@ -239,6 +245,8 @@ allTetrominoes = {
   
 ## Release History
 * 0.0.1
-  * Initial release
+  * Initial Release
 * 0.0.2
   * Update README
+* 0.0.3
+  * Layout Change, Start Screen, Music
