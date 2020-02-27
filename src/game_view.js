@@ -78,6 +78,7 @@ class GameView {
             }
             break;
 
+          // M Key (Mute Music)
           case "KeyM":
             if (this.muted) {
               this.themeSong.play();
