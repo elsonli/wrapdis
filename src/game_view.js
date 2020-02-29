@@ -123,7 +123,7 @@ class GameView {
     this.controller.pauseListener = this.controller.pauseListener.bind(this);
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
     this.muted = false;
-    this.themeSong = new Audio("https://tcrf.net/images/a/a6/Tetris11ATYPE.ogg");
+    this.themeSong = new Audio("https://ia600504.us.archive.org/33/items/TetrisThemeMusic/Tetris.ogg");
   }
   
   // This function will be continuously called until the game is over, and
