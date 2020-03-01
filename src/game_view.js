@@ -80,36 +80,14 @@ class GameView {
 
           // M Key (Mute Music)
           case "KeyM":
-            if (this.muted) {
-              this.themeSong.play();
-              this.muted = false;
-            } else {
-              this.themeSong.pause();
-              this.muted = true;
-            }
+            let muteButton = document.getElementsByClassName("mute-button")[0];
+            muteButton.click();
             break;
 
           // Enter Key (Pause Game)
           case "Enter":
-            let currTime = Date.now();
-            if (currTime - this.lastTime < 100) return;
-            this.lastTime = currTime;
-            this.paused = !this.paused;
-
-            let pauseNode = document.getElementsByClassName("pause-screen")[0];
-            if (this.paused && !this.game.gameOver()) {
-              this.themeSong.pause();
-              pauseNode.classList.add("pause-overlay");
-              pauseNode.innerText = "Paused";
-              window.addEventListener("keydown", this.controller.pauseListener);
-              this.stop();
-            } else {
-              this.themeSong.play();
-              pauseNode.classList.remove("pause-overlay");
-              pauseNode.innerText = "";
-              window.removeEventListener("keydown", this.controller.pauseListener);
-              this.start();
-            }
+            let pauseButton = document.getElementsByClassName("pause-button")[0];
+            pauseButton.click();
             break;
         }
       }
@@ -124,6 +102,46 @@ class GameView {
     window.addEventListener("keydown", this.controller.keyListener.bind(this));
     this.muted = false;
     this.themeSong = new Audio("https://ia600504.us.archive.org/33/items/TetrisThemeMusic/Tetris.ogg");
+    this.themeSong.loop = true;
+    
+    let muteButton = document.getElementsByClassName("mute-button")[0];
+    muteButton.addEventListener("click", () => {
+      if (this.paused) return;
+      if (this.muted) {
+        muteButton.innerText = "Mute";
+        this.themeSong.play();
+        this.muted = false;
+      } else {
+        muteButton.innerText = "Unmute";
+        this.themeSong.pause();
+        this.muted = true;
+      }
+    });
+
+    let pauseButton = document.getElementsByClassName("pause-button")[0];
+    pauseButton.addEventListener("click", () => {
+      let currTime = Date.now();
+      if (currTime - this.lastTime < 100) return;
+      this.lastTime = currTime;
+      this.paused = !this.paused;
+
+      let pauseNode = document.getElementsByClassName("pause-screen")[0];
+      if (this.paused && !this.game.gameOver()) {
+        pauseButton.innerText = "Unpause";
+        this.themeSong.pause();
+        pauseNode.classList.add("pause-overlay");
+        pauseNode.innerText = "Paused";
+        window.addEventListener("keydown", this.controller.pauseListener);
+        this.stop();
+      } else {
+        pauseButton.innerText = "Pause";
+        if (!this.muted) this.themeSong.play();
+        pauseNode.classList.remove("pause-overlay");
+        pauseNode.innerText = "";
+        window.removeEventListener("keydown", this.controller.pauseListener);
+        this.start();
+      }
+    });
   }
   
   // This function will be continuously called until the game is over, and

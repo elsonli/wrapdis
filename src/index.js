@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     new GameView(ctx).start();
     startGameNode.removeChild(startNode);
   };
-
+  
   startNode.innerHTML = "Start Game";
   startNode.classList.add("start-game");
   startGameNode.appendChild(startNode);
