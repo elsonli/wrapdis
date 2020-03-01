@@ -81,6 +81,7 @@ body > div {
 .game-content {
   display: flex;
   justify-content: space-around;
+  position: absolute;
 }
 
 .game-title {
